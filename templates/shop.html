@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Shop</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#111;
+            color:white;
+            text-align:center;
+        }
+
+        h1{
+            margin-top:30px;
+        }
+
+        .shop-container{
+            display:flex;
+            justify-content:center;
+            gap:30px;
+            margin-top:40px;
+        }
+
+        .shop-item{
+            background:#222;
+            padding:20px;
+            border-radius:10px;
+            width:200px;
+            box-shadow:0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .shop-item img{
+            width:100%;
+            border-radius:8px;
+        }
+
+        .buy-btn{
+            margin-top:10px;
+            padding:8px 15px;
+            border:none;
+            background:#4CAF50;
+            color:white;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        .buy-btn:hover{
+            background:#45a049;
+        }
+
+        .back-btn{
+            margin-top:40px;
+            padding:10px 20px;
+            background:#ff4444;
+            border:none;
+            border-radius:5px;
+            color:white;
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Game Shop</h1>
+<p>Buy new cars and upgrades</p>
+
+<div class="shop-container">
+
+    <div class="shop-item">
+        <img src="/static/image/car4.png">
+        <h3>Sport Car</h3>
+        <p>Price: 1000</p>
+        <button class="buy-btn">Buy</button>
+    </div>
+
+    <div class="shop-item">
+        <img src="/static/image/car2.png">
+        <h3>Turbo Car</h3>
+        <p>Price: 2000</p>
+        <button class="buy-btn">Buy</button>
+    </div>
+
+    <div class="shop-item">
+        <img src="/static/image/car3.png">
+        <h3>Super Car</h3>
+        <p>Price: 5000</p>
+        <button class="buy-btn">Buy</button>
+    </div>
+
+</div>
+
+<br>
+
+<a href="/main_menu">
+<button class="back-btn">← Back to Menu</button>
+</a>
+
+</body>
+</html>

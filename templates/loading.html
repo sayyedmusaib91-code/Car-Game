@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Loading</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    height: 100vh;
+    overflow: hidden;
+
+    /* 🔥 BACKGROUND IMAGE */
+    background: url('/static/image/load1.png') no-repeat center center;
+    background-size: cover;
+}
+
+/* Dark overlay for visibility */
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    top: 0;
+    left: 0;
+}
+
+/* Bottom container */
+.loading-container {
+    position: absolute;
+    bottom: 50px;
+    width: 100%;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Loading text */
+.loading-text {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #ccc;
+}
+
+/* Bar background */
+.bar {
+    width: 80%;
+    height: 18px;
+    background: #333;
+    margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Fill */
+.fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffcc00, #ffaa00);
+    transition: width 0.3s;
+}
+
+/* Percentage */
+.percent {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="loading-container">
+    <div class="loading-text" id="loadingText">Loading Game...</div>
+
+    <div class="bar">
+        <div class="fill" id="fill"></div>
+    </div>
+
+    <div class="percent" id="percent">0%</div>
+</div>
+
+<script>
+let progress = 0;
+
+let texts = [
+    "Loading Game...",
+    "Setting Environment...",
+    "Spawning Cars...",
+    "Preparing Race...",
+    "Almost Ready..."
+];
+
+function loadGame(){
+
+    if(progress >= 100){
+        window.location.href = "/main_menu";
+        return;
+    }
+
+    let step = Math.floor(Math.random() * 10) + 1;
+    progress += step;
+    if(progress > 100) progress = 100;
+
+    document.getElementById("fill").style.width = progress + "%";
+    document.getElementById("percent").innerText = progress + "%";
+
+    document.getElementById("loadingText").innerText =
+        texts[Math.floor(Math.random() * texts.length)];
+
+    let delay = Math.random() * 500 + 200;
+
+    setTimeout(loadGame, delay);
+}
+
+loadGame();
+</script>
+
+</body>
+</html>

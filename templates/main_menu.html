@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Clash - Main Menu</title>
+
+<!-- External Icons & Fonts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Teko:wght@600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Arial Black', Arial, Helvetica, sans-serif;
+    color: white;
+    background: #000;
+}
+
+/* BACKGROUND CONTAINER */
+.main-container {
+    height: 100vh;
+    width: 100vw;
+    background: url("/static/image/main3.png") center/cover no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+
+#unity-canvas {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.ui-layer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* 1. TOP FULL BAR */
+.top-bar-wrapper {
+    width: 100%;
+    height: 65px;
+    background: rgba(0, 0, 0, 0.92);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    position: relative;
+}
+
+.top-left-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    padding: 4px 14px 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.top-left-profile:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.top-left-profile:hover .profile-name,
+.top-left-profile:hover .profile-vip {
+    color: #000000;
+}
+
+.profile-avatar {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid #ffffff;
+    border-radius: 2px;
+    background: #111;
+    object-fit: cover;
+}
+
+.profile-meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-name {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: #ffffff;
+    text-transform: uppercase;
+    line-height: 1.1;
+    transition: color 0.2s;
+}
+
+.profile-vip {
+    font-size: 10px;
+    font-weight: 800;
+    color: #cbd5e1;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.main-menu-top-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.top-right-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.cart-btn {
+    color: #ffffff;
+    font-size: 28px;
+    margin-right: 15px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.cart-btn:hover {
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+.cash-slanted-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    height: 42px;
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+    clip-path: polygon(15% 0, 100% 0, 85% 100%, 0% 100%);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+}
+
+/* 2. RIGHT ACTION BUTTONS (BLACK & WHITE) */
+.right-action-panel {
+    position: absolute;
+    right: 25px;
+    top: 48%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 20;
+}
+
+.action-nav-btn {
+    background: rgba(10, 10, 10, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-family: 'Teko', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 1.5px;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    clip-path: polygon(8% 0, 100% 0, 92% 100%, 0% 100%);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+    transition: all 0.2s ease;
+}
+
+.action-nav-btn i {
+    color: #ffffff;
+    font-size: 1.3rem;
+    transition: color 0.2s;
+}
+
+.action-nav-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: translateX(-6px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.action-nav-btn:hover i {
+    color: #000000;
+}
+
+/* 3. CENTER CAR DISPLAY */
+#carDisplay {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 240px;
+    z-index: 5;
+    transition: transform 0.3s ease;
+}
+
+#carDisplay img {
+    width: auto;
+    height: 100%;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8));
+}
+
+.arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    transition: all 0.2s;
+}
+
+#carDisplay .arrow-btn:first-child { left: -90px; }
+#carDisplay .arrow-btn:last-child { right: -90px; }
+
+.arrow-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: translateY(-50%) scale(1.15);
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ef4444;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 900;
+    border-radius: 8px;
+    border: 2px solid rgba(239, 68, 68, 0.6);
+}
+
+/* 4. CENTER PLAY BUTTON */
+.center-play-wrapper {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+.exact-play-btn {
+    background: linear-gradient(180deg, rgba(25, 25, 25, 0.98) 0%, rgba(0, 0, 0, 0.98) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 2px;
+    padding: 8px 80px;
+    cursor: pointer;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+    transition: all 0.2s ease;
+    clip-path: polygon(8% 0, 100% 0, 92% 100%, 0% 100%);
+}
+
+.exact-play-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: scale(1.06);
+    border-color: #ffffff;
+}
+
+/* 5. BOTTOM FLOATING CONTROLS */
+.bottom-floating-controls {
+    width: 100%;
+    height: 75px;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px 15px 35px;
+    position: relative;
+    z-index: 25;
+}
+
+.gear-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 38px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+    transition: transform 0.3s ease, color 0.2s;
+}
+
+.gear-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+    color: #e2e8f0;
+}
+
+.bottom-more-games-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 2px;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.bottom-more-games-btn:hover {
+    color: #94a3b8;
+    transform: scale(1.05);
+}
+
+/* ========================================================
+   CAR SELECTION MODE HUD (MONOCHROME / B&W)
+   ======================================================== */
+#carCustomViewHUD {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    padding: 30px 40px;
+    pointer-events: none;
+}
+
+.hud-interactive { pointer-events: auto; }
+
+.car-inspect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.car-inspect-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.car-inspect-title span { color: #94a3b8; font-size: 1.2rem; margin-left: 10px; font-family: 'Rajdhani'; }
+
+.car-specs-panel {
+    position: absolute;
+    left: 40px;
+    top: 130px;
+    width: 330px;
+    background: rgba(10, 10, 10, 0.9);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 22px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.spec-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.spec-bar-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.spec-bar-fill {
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    transition: width 0.3s ease;
+}
+
+.inspect-action-footer {
+    position: absolute;
+    bottom: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.inspect-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 12px 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    transition: all 0.2s ease;
+}
+
+.btn-equip {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.btn-equip:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+.btn-equip.locked-btn {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+    cursor: not-allowed;
+}
+
+.btn-back {
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+.btn-back:hover { background: #ef4444; border-color: #ef4444; }
+
+/* ========================================================
+   MAP SELECTION MODE HUD (B&W THEME)
+   ======================================================== */
+#mapSelectionHUD {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 5, 5, 0.92);
+    z-index: 60;
+    padding: 30px 40px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.map-inspect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.map-display-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map-card-box {
+    width: 100%;
+    background: rgba(15, 15, 15, 0.95);
+    border: 2px solid #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+.map-icon-cover {
+    width: 100%;
+    height: 180px;
+    background: #111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #ffffff;
+}
+
+.map-details {
+    padding: 18px 22px;
+}
+
+.map-name-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.map-stats-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.map-lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ef4444;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+}
+
+.map-arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 32px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    transition: all 0.2s;
+}
+
+.map-arrow-btn:hover {
+    background: #ffffff;
+    color: #000;
+    transform: translateY(-50%) scale(1.12);
+}
+
+.map-arrow-left { left: -90px; }
+.map-arrow-right { right: -90px; }
+
+/* SETTINGS & MODALS */
+#settings-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: rgba(10, 10, 10, 0.98);
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    padding: 24px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.95);
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 200;
+}
+
+#settings-menu h3 { font-size: 1.5rem; text-align: center; color: #ffffff; }
+#settings-menu label { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 700; }
+#settings-menu select { background: #222; color: white; border: 1px solid #444; padding: 4px 8px; font-weight: bold; }
+.modal-btn { padding: 10px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; text-align: center; text-decoration: none; }
+.logout-btn { background: #e60000; color: white; margin-top: 4px; }
+.close-btn { background: #333333; color: white; }
+
+#comingSoonPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #000;
+    border: 2px solid #ffffff;
+    color: white;
+    padding: 25px 45px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    font-style: italic;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9);
+    z-index: 250;
+}
+
+#matchText {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: 3px solid #ffffff;
+    padding: 20px 40px;
+    font-size: 2rem;
+    font-style: italic;
+    color: #ffffff;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    gap: 20px;
+    z-index: 150;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-container" id="mainContainer">
+    <canvas id="unity-canvas"></canvas>
+
+    <!-- STANDARD MAIN MENU UI -->
+    <div class="ui-layer" id="main-menu-ui">
+        
+        <!-- TOP FULL BAR -->
+        <header class="top-bar-wrapper">
+            <div class="top-left-profile" onclick="goToProfile()" title="View Profile">
+                <img src="/static/image/mn2.png" class="profile-avatar" alt="Avatar">
+                <div class="profile-meta">
+                    <span class="profile-name">{{ username or 'Driver' }}</span>
+                    <span class="profile-vip">VIP: 1</span>
+                </div>
+            </div>
+
+            <div class="main-menu-top-title">MAIN MENU</div>
+
+            <div class="top-right-group">
+                <a href="/shop" class="cart-btn" title="Shop">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+                <div class="cash-slanted-box">$ 0</div>
+            </div>
+        </header>
+
+        <!-- RIGHT ACTION BUTTONS -->
+        <div class="right-action-panel">
+            <button class="action-nav-btn" onclick="enterCarSelectionMode()">
+                <i class="fas fa-car-side"></i> SELECT CAR
+            </button>
+            <button class="action-nav-btn" onclick="enterMapSelectionMode()">
+                <i class="fas fa-map-marked-alt"></i> SELECT MAP
+            </button>
+        </div>
+
+        <!-- CENTER FLOATING PLAY BUTTON -->
+        <div class="center-play-wrapper">
+            <button class="exact-play-btn" id="playBtn" onclick="playGame()">PLAY</button>
+        </div>
+
+        <!-- BOTTOM FLOATING CONTROLS -->
+        <footer class="bottom-floating-controls">
+            <button class="gear-btn" onclick="openSettings()" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+
+            <button class="bottom-more-games-btn" onclick="showComingSoon()">MORE GAMES</button>
+        </footer>
+
+    </div>
+
+    <!-- SHARED CAR DISPLAY -->
+    <div id="carDisplay">
+        <button class="arrow-btn" id="leftArrow" onclick="prevCar()"><i class="fas fa-chevron-left"></i></button>
+        <img id="carImage" src="/static/image/n1.png" alt="Car">
+        <div class="lock-overlay" id="lockOverlay">LOCKED</div>
+        <button class="arrow-btn" id="rightArrow" onclick="nextCar()"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- CAR SELECTION INSPECT MODE HUD -->
+    <div id="carCustomViewHUD">
+        <div class="car-inspect-header hud-interactive">
+            <div class="car-inspect-title" id="inspectCarName">BUGATTI CHIRON <span>[CLASS-S]</span></div>
+            <div style="font-family:'Rajdhani'; font-size:1.2rem; color:#ffffff; font-weight:bold;">SELECTED MAP: <span id="currentSelectedMapLabel" style="color:#94a3b8;">CYBER HIGHWAY</span></div>
+        </div>
+
+        <!-- Left Specs Panel -->
+        <div class="car-specs-panel hud-interactive">
+            <div class="spec-item">
+                <div class="spec-labels"><span>ENGINE / DRIVE</span><span id="specEngine" style="color:#ffffff;">8.0L W16 QUAD-TURBO</span></div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-labels"><span>TOP SPEED</span><span id="specSpeed">420 KM/H</span></div>
+                <div class="spec-bar-track"><div class="spec-bar-fill" id="barSpeed" style="width: 95%;"></div></div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-labels"><span>ACCELERATION (0-100)</span><span id="specAccel">2.4 SEC</span></div>
+                <div class="spec-bar-track"><div class="spec-bar-fill" id="barAccel" style="width: 92%;"></div></div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-labels"><span>HANDLING & DRIFT</span><span id="specHandling">88%</span></div>
+                <div class="spec-bar-track"><div class="spec-bar-fill" id="barHandling" style="width: 88%;"></div></div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-labels"><span>NITRO BOOST</span><span id="specNitro">90%</span></div>
+                <div class="spec-bar-track"><div class="spec-bar-fill" id="barNitro" style="width: 90%;"></div></div>
+            </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="inspect-action-footer hud-interactive">
+            <button class="inspect-btn btn-equip" id="equipCarBtn" onclick="confirmEquipCar()">SELECT CAR</button>
+            <button class="inspect-btn btn-back" onclick="exitCarSelectionMode()">BACK</button>
+        </div>
+    </div>
+
+    <!-- MAP SELECTION MODE HUD -->
+    <div id="mapSelectionHUD">
+        <div class="map-inspect-header">
+            <div style="font-family:'Orbitron'; font-size:2rem; color:#ffffff; letter-spacing:2px;">CHOOSE TRACK / ARENA</div>
+            <button class="inspect-btn btn-back" onclick="exitMapSelectionMode()">CLOSE ✕</button>
+        </div>
+
+        <!-- Center Map Preview Card & Arrows -->
+        <div class="map-display-wrapper">
+            <button class="map-arrow-btn map-arrow-left" onclick="prevMap()"><i class="fas fa-chevron-left"></i></button>
+            
+            <div class="map-card-box">
+                <div class="map-icon-cover" id="mapCoverIcon">
+                    <i class="fas fa-city"></i>
+                </div>
+                <div class="map-details">
+                    <div class="map-name-label" id="mapTitleLabel">CYBER HIGHWAY</div>
+                    <div class="map-stats-text" id="mapStatsLabel">Length: 4.8 km • Difficulty: MEDIUM</div>
+                </div>
+                <div class="map-lock-overlay" id="mapLockOverlay">LOCKED 🔒</div>
+            </div>
+
+            <button class="map-arrow-btn map-arrow-right" onclick="nextMap()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div style="text-align:center;">
+            <button class="inspect-btn btn-equip" id="equipMapBtn" onclick="confirmSelectMap()">SELECT MAP</button>
+        </div>
+    </div>
+
+    <!-- Match Starting Countdown Overlay -->
+    <div id="matchText">
+        <span>STARTING IN: <b id="matchTimer" style="color:#ffffff;">5</b>s</span>
+        <button onclick="cancelMatch()" style="background:transparent; border:2px solid #ffffff; color:#ffffff; padding:6px 14px; cursor:pointer; font-weight:900;">CANCEL</button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-menu">
+        <h3>SETTINGS</h3>
+        <label>Music <input type="checkbox" checked></label>
+        <label>Sound FX <input type="checkbox" checked></label>
+        <label>Graphics
+            <select>
+                <option>Low</option>
+                <option>Medium</option>
+                <option selected>High</option>
+            </select>
+        </label>
+        <label>Controls
+            <select>
+                <option>Keyboard</option>
+                <option>Touch</option>
+            </select>
+        </label>
+        <a href="/privacy_policy" class="modal-btn" style="background:#222; color:#fff;">Privacy Policy</a>
+        <a href="/logout" class="modal-btn logout-btn">Logout</a>
+        <button class="modal-btn close-btn" onclick="closeSettings()">Close</button>
+    </div>
+
+    <div id="comingSoonPopup">FEATURE COMING SOON!</div>
+</div>
+
+<!-- Unity Script & Logic -->
+<script>
+var globalUnityInstance = null;
+let countdown;
+let timer = 5;
+var buildUrl = "/static/BugattiBuild/Build";
+var config = {
+    dataUrl: buildUrl + "/BugattiBuild.data",
+    frameworkUrl: buildUrl + "/BugattiBuild.framework.js",
+    codeUrl: buildUrl + "/BugattiBuild.wasm",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "DefaultCompany",
+    productName: "Car_Clash",
+    productVersion: "1.0",
+};
+
+var script = document.createElement("script");
+script.src = buildUrl + "/BugattiBuild.loader.js";
+script.onload = () => {
+    createUnityInstance(document.querySelector("#unity-canvas"), config).then((instance) => {
+        globalUnityInstance = instance;
+        console.log("Unity Loaded");
+    }).catch((err) => {
+        console.warn("Unity Load bypassed:", err);
+    });
+};
+document.body.appendChild(script);
+
+// CAR DATA & SPECS
+let cars = [
+  { img: "/static/image/n1.png", name: "BUGATTI CHIRON", class: "CLASS-S", engine: "8.0L W16 QUAD-TURBO", speed: "420 KM/H", speedVal: 95, accel: "2.4 SEC", accelVal: 92, handling: "88%", handlingVal: 88, nitro: "90%", nitroVal: 90, unlocked: true },
+  { img: "/static/image/car2.png", name: "PORSCHE 911 GT3", class: "CLASS-A", engine: "4.0L FLAT-6 TWIN-TURBO", speed: "340 KM/H", speedVal: 82, accel: "3.0 SEC", accelVal: 84, handling: "94%", handlingVal: 94, nitro: "80%", nitroVal: 80, unlocked: false },
+  { img: "/static/image/car3.png", name: "MCLAREN SPEEDTAIL", class: "CLASS-S+", engine: "4.0L V8 HYBRID", speed: "403 KM/H", speedVal: 93, accel: "2.6 SEC", accelVal: 89, handling: "90%", handlingVal: 90, nitro: "92%", nitroVal: 92, unlocked: false },
+  { img: "/static/image/car4.png", name: "LAMBORGHINI VENENO", class: "CLASS-S", engine: "6.5L NA V12", speed: "355 KM/H", speedVal: 86, accel: "2.8 SEC", accelVal: 87, handling: "86%", handlingVal: 86, nitro: "85%", nitroVal: 85, unlocked: false }
+];
+
+// MAP DATA (ONLY HIGHWAY UNLOCKED)
+let maps = [
+    { title: "CYBER HIGHWAY", icon: "fa-city", stats: "Length: 4.8 km • Difficulty: MEDIUM", unlocked: true },
+    { title: "NEON HARBOR", icon: "fa-water", stats: "Length: 6.2 km • Difficulty: HARD", unlocked: false },
+    { title: "DESERT CANYON", icon: "fa-mountain", stats: "Length: 3.5 km • Difficulty: EASY", unlocked: false }
+];
+
+let currentCar = 0;
+let selectedEquippedCar = 0;
+let currentMapIndex = 0;
+let selectedMapName = "CYBER HIGHWAY";
+
+function updateCar() {
+    const car = cars[currentCar];
+    document.getElementById("carImage").src = car.img;
+    const lockOverlay = document.getElementById("lockOverlay");
+    const equipBtn = document.getElementById("equipCarBtn");
+
+    document.getElementById("inspectCarName").innerHTML = `${car.name} <span>[${car.class}]</span>`;
+    document.getElementById("specEngine").innerText = car.engine;
+    document.getElementById("specSpeed").innerText = car.speed;
+    document.getElementById("barSpeed").style.width = car.speedVal + "%";
+    document.getElementById("specAccel").innerText = car.accel;
+    document.getElementById("barAccel").style.width = car.accelVal + "%";
+    document.getElementById("specHandling").innerText = car.handling;
+    document.getElementById("barHandling").style.width = car.handlingVal + "%";
+    document.getElementById("specNitro").innerText = car.nitro;
+    document.getElementById("barNitro").style.width = car.nitroVal + "%";
+
+    if (car.unlocked) {
+        lockOverlay.style.display = "none";
+        equipBtn.innerText = "SELECT CAR";
+        equipBtn.classList.remove("locked-btn");
+    } else {
+        lockOverlay.style.display = "flex";
+        equipBtn.innerText = "LOCKED 🔒";
+        equipBtn.classList.add("locked-btn");
+    }
+}
+
+function nextCar() {
+    currentCar++;
+    if (currentCar >= cars.length) currentCar = 0;
+    updateCar();
+}
+
+function prevCar() {
+    currentCar--;
+    if (currentCar < 0) currentCar = cars.length - 1;
+    updateCar();
+}
+
+updateCar();
+
+// CAR SELECTION MODE
+function enterCarSelectionMode() {
+    document.getElementById("main-menu-ui").style.display = "none";
+    document.getElementById("carCustomViewHUD").style.display = "block";
+    document.getElementById("leftArrow").style.display = "flex";
+    document.getElementById("rightArrow").style.display = "flex";
+    document.getElementById("carDisplay").style.transform = "translate(-50%, -46%) scale(1.15)";
+    updateCar();
+}
+
+function exitCarSelectionMode() {
+    currentCar = selectedEquippedCar;
+    updateCar();
+
+    document.getElementById("main-menu-ui").style.display = "flex";
+    document.getElementById("carCustomViewHUD").style.display = "none";
+    document.getElementById("leftArrow").style.display = "none";
+    document.getElementById("rightArrow").style.display = "none";
+    document.getElementById("carDisplay").style.transform = "translate(-50%, -50%) scale(1)";
+}
+
+function confirmEquipCar() {
+    if (!cars[currentCar].unlocked) {
+        alert("This car is locked!");
+        return;
+    }
+    selectedEquippedCar = currentCar;
+    document.getElementById("main-menu-ui").style.display = "flex";
+    document.getElementById("carCustomViewHUD").style.display = "none";
+    document.getElementById("leftArrow").style.display = "none";
+    document.getElementById("rightArrow").style.display = "none";
+    document.getElementById("carDisplay").style.transform = "translate(-50%, -50%) scale(1)";
+}
+
+// MAP SELECTION MODE
+function enterMapSelectionMode() {
+    document.getElementById("mapSelectionHUD").style.display = "flex";
+    updateMapDisplay();
+}
+
+function exitMapSelectionMode() {
+    document.getElementById("mapSelectionHUD").style.display = "none";
+}
+
+function updateMapDisplay() {
+    const map = maps[currentMapIndex];
+    document.getElementById("mapCoverIcon").innerHTML = `<i class="fas ${map.icon}"></i>`;
+    document.getElementById("mapTitleLabel").innerText = map.title;
+    document.getElementById("mapStatsLabel").innerText = map.stats;
+
+    const mapLock = document.getElementById("mapLockOverlay");
+    const mapBtn = document.getElementById("equipMapBtn");
+
+    if (map.unlocked) {
+        mapLock.style.display = "none";
+        mapBtn.innerText = "SELECT MAP";
+        mapBtn.classList.remove("locked-btn");
+    } else {
+        mapLock.style.display = "flex";
+        mapBtn.innerText = "LOCKED 🔒";
+        mapBtn.classList.add("locked-btn");
+    }
+}
+
+function nextMap() {
+    currentMapIndex++;
+    if (currentMapIndex >= maps.length) currentMapIndex = 0;
+    updateMapDisplay();
+}
+
+function prevMap() {
+    currentMapIndex--;
+    if (currentMapIndex < 0) currentMapIndex = maps.length - 1;
+    updateMapDisplay();
+}
+
+function confirmSelectMap() {
+    if (!maps[currentMapIndex].unlocked) {
+        alert("This map is locked!");
+        return;
+    }
+    selectedMapName = maps[currentMapIndex].title;
+    document.getElementById("currentSelectedMapLabel").innerText = selectedMapName;
+    exitMapSelectionMode();
+}
+
+// AUDIO CLICK SFX
+const clickSound = new Audio("/static/sounds/bg1-music.mp3");
+clickSound.preload = "auto";
+
+document.querySelectorAll("button, a, .top-left-profile").forEach(el => {
+    el.addEventListener("click", () => {
+        const sound = clickSound.cloneNode();
+        sound.play().catch(() => {});
+    });
+});
+
+function playGame() {
+    if (!cars[selectedEquippedCar].unlocked) {
+        alert("Select an unlocked car to play!");
+        return;
+    }
+
+    timer = 5;
+    const matchHUD = document.getElementById("matchText");
+    matchHUD.style.display = "flex";
+    document.getElementById("matchTimer").innerText = timer;
+
+    countdown = setInterval(function() {
+        timer--;
+        document.getElementById("matchTimer").innerText = timer;
+
+        if (timer <= 0) {
+            clearInterval(countdown);
+            matchHUD.style.display = "none";
+            document.getElementById("main-menu-ui").style.display = "none";
+            document.getElementById("carDisplay").style.display = "none";
+            document.getElementById("unity-canvas").style.display = "block";
+
+            if (globalUnityInstance) {
+                globalUnityInstance.SendMessage("GameManager", "StartGame");
+            }
+        }
+    }, 1000);
+}
+
+function cancelMatch() {
+    clearInterval(countdown);
+    document.getElementById("matchText").style.display = "none";
+}
+
+function openSettings() { document.getElementById("settings-menu").style.display = "flex"; }
+function closeSettings() { document.getElementById("settings-menu").style.display = "none"; }
+
+function showComingSoon() {
+    let popup = document.getElementById("comingSoonPopup");
+    popup.style.display = "block";
+    setTimeout(() => { popup.style.display = "none"; }, 1800);
+}
+
+function goToProfile() {
+    setTimeout(() => {
+        window.location.href = "/profile";
+    }, 150);
+}
+</script>
+
+</body>
+</html>

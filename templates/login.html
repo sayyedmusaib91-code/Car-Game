@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Clash 3D - Driver Login</title>
+    
+    <!-- External Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+            background: #030712;
+        }
+
+        /* Background Image Layer */
+        .bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Main UI Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100vw;
+            height: 100vh;
+            padding: 24px 38px;
+        }
+
+        /* Top Header */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .game-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            font-style: italic;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .game-logo span {
+            color: #00f0ff;
+            font-style: normal;
+            margin-left: 4px;
+        }
+
+        .server-status {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .server-status .online {
+            color: #22c55e;
+            text-shadow: 0 0 8px #22c55e;
+        }
+
+        .server-status .ping {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.88rem;
+            margin-left: 4px;
+        }
+
+        /* Center Layout */
+        .login-section {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 20px;
+            width: 100%;
+        }
+
+        /* 3D Flip Card Container */
+        .flip-card-wrapper {
+            perspective: 1200px;
+            width: 330px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card-wrapper.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Shared Card Styles */
+        .card-face {
+            position: relative;
+            width: 100%;
+            background: rgba(6, 15, 26, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 22px 20px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2), 0 0 35px rgba(217, 70, 239, 0.15);
+            border: 1.8px solid transparent;
+            background-clip: padding-box;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .card-face::before {
+            content: '';
+            position: absolute;
+            top: -1.8px; bottom: -1.8px;
+            left: -1.8px; right: -1.8px;
+            background: linear-gradient(135deg, #00f0ff 0%, rgba(0,240,255,0.1) 40%, rgba(217,70,239,0.15) 70%, #d946ef 100%);
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        .card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+
+        .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .card-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem;
+            letter-spacing: 1.8px;
+            color: #00f0ff;
+            text-align: center;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        /* In-box Custom Notification Messages */
+        .msg-box {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .msg-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Buttons Stack */
+        .social-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .auth-btn {
+            position: relative;
+            width: 100%;
+            height: 38px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, filter 0.2s ease;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-1.5px);
+            filter: brightness(1.12);
+        }
+
+        /* Google Button */
+        .btn-google {
+            background: #3b82f6;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-google .icon-box {
+            position: absolute;
+            left: 4px;
+            width: 30px;
+            height: 30px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            color: #ea4335;
+        }
+
+        /* Facebook Button */
+        .btn-facebook {
+            background: #2563eb;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-facebook .fb-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 1.25rem;
+        }
+
+        /* Guest Button */
+        .btn-guest {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-guest .helmet-icon {
+            position: absolute;
+            left: 12px;
+            font-size: 1.1rem;
+            color: #cbd5e1;
+        }
+
+        /* Separator */
+        .separator {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .separator .line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .separator span {
+            padding: 0 8px;
+        }
+
+        /* Inputs & Password Eye Wrapper */
+        .form-group {
+            position: relative;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 36px;
+            padding: 0 12px;
+            background: rgba(10, 20, 32, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group.has-eye input {
+            padding-right: 36px; /* Space for eye button */
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .form-group input:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Eye Icon Button */
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+            z-index: 5;
+        }
+
+        .eye-icon:hover {
+            color: #00f0ff;
+        }
+
+        /* Action Buttons */
+        .ignition-btn {
+            width: 100%;
+            height: 40px;
+            margin-top: 8px;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 50%, #a855f7 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 0.88rem;
+            letter-spacing: 1.2px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 0 18px rgba(0, 198, 255, 0.45), 0 0 22px rgba(168, 85, 247, 0.3);
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
+        .ignition-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 0 25px rgba(0, 198, 255, 0.7), 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Flip Links */
+        .switch-box {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .switch-link {
+            color: #00f0ff;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 4px;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        .switch-link:hover {
+            color: #d946ef;
+            text-shadow: 0 0 8px rgba(217, 70, 239, 0.6);
+        }
+
+        /* Footer */
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .footer-icons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .footer-icons button {
+            width: 30px;
+            height: 30px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .build-tag {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Layer -->
+    <div class="bg-wrapper">
+        <img src="/static/image/login1.png" alt="Game Background">
+    </div>
+
+    <div class="main-container">
+        <!-- Top Bar -->
+        <header class="game-header">
+            <div class="game-logo">CAR CLASH<span>3D</span></div>
+            <div class="server-status">
+                ASIA-1: <span class="online">ONLINE</span> <span class="ping">(Ping: 14ms)</span>
+            </div>
+        </header>
+
+        <!-- Centered UI Box -->
+        <main class="login-section">
+            <div class="flip-card-wrapper" id="cardWrapper">
+                <div class="flip-card-inner">
+                    
+                    <!-- FRONT: LOGIN FACE -->
+                    <div class="card-face card-front">
+                        <div class="card-header">
+                            <h2>DRIVER IDENTITY</h2>
+                        </div>
+
+                        <!-- Login In-Box Message -->
+                        <div id="loginMsg" class="msg-box"></div>
+
+                        <div class="social-auth">
+                            <button class="auth-btn btn-google" type="button" onclick="showMsg('loginMsg', 'Google Auth coming soon in build v3.2', true)">
+                                <div class="icon-box"><i class="fab fa-google"></i></div>
+                                <span>Continue with Google</span>
+                            </button>
+                            
+                            <button class="auth-btn btn-facebook" type="button" onclick="showMsg('loginMsg', 'Facebook Auth coming soon in build v3.2', true)">
+                                <i class="fab fa-facebook-f fb-icon"></i>
+                                <span>Sign in with Facebook</span>
+                            </button>
+                            
+                            <button class="auth-btn btn-guest" type="button" onclick="handleGuestLogin()">
+                                <i class="fas fa-helmet-safety helmet-icon"></i>
+                                <span>Play as Guest</span>
+                            </button>
+                        </div>
+
+                        <div class="separator">
+                            <div class="line"></div>
+                            <span>OR</span>
+                            <div class="line"></div>
+                        </div>
+
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <input type="text" id="loginUsername" placeholder="Username / Phone" required autocomplete="off">
+                            </div>
+                            <div class="form-group has-eye">
+                                <input type="password" id="loginPassword" placeholder="Password" required>
+                                <i class="fas fa-eye eye-icon" onclick="togglePassVisibility('loginPassword', this)"></i>
+                            </div>
+                            <button type="submit" class="ignition-btn" id="loginBtn">
+                                <span>LOGIN</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </form>
+
+                        <div class="switch-box">
+                            New Here? <span class="switch-link" onclick="toggleFlip()">Register</span>
+                        </div>
+                    </div>
+
+                    <!-- BACK: REGISTER FACE -->
+                    <div class="card-face card-back">
+                        <div class="card-header">
+                            <h2>CREATE DRIVER</h2>
+                        </div>
+
+                        <!-- Register In-Box Message -->
+                        <div id="regMsg" class="msg-box"></div>
+
+                        <form onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <input type="tel" id="regPhone" placeholder="Mobile Number" maxlength="10" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regUsername" placeholder="Unique Username" required autocomplete="off">
+                            </div>
+                            <div class="form-group has-eye">
+                                <input type="password" id="regPassword" placeholder="Password (min 6 chars, 1 letter, 1 number)" required>
+                                <i class="fas fa-eye eye-icon" onclick="togglePassVisibility('regPassword', this)"></i>
+                            </div>
+                            <div class="form-group has-eye">
+                                <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+                                <i class="fas fa-eye eye-icon" onclick="togglePassVisibility('regConfirmPassword', this)"></i>
+                            </div>
+                            <button type="submit" class="ignition-btn" id="regBtn">
+                                <span>REGISTER DRIVER</span>
+                                <i class="fas fa-arrow-rotate-right"></i>
+                            </button>
+                        </form>
+
+                        <div class="switch-box">
+                            Already Driver? <span class="switch-link" onclick="toggleFlip()">Login Here</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <div class="footer-icons">
+                <button title="Sound"><i class="fas fa-volume-high"></i></button>
+                <button title="Settings"><i class="fas fa-gear"></i></button>
+                <button title="Help"><i class="fas fa-question"></i></button>
+            </div>
+            <div class="build-tag">v3.1 - WebGL/PC</div>
+        </footer>
+    </div>
+
+    <script>
+        // Password Visibility Toggle Function
+        function togglePassVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                icon.style.color = '#00f0ff';
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                icon.style.color = '#94a3b8';
+            }
+        }
+
+        function toggleFlip() {
+            document.getElementById('cardWrapper').classList.toggle('flipped');
+            // Hide previous messages on flip
+            document.getElementById('loginMsg').style.display = 'none';
+            document.getElementById('regMsg').style.display = 'none';
+        }
+
+        // In-Box Message Display Helper
+        function showMsg(elementId, message, isError) {
+            const msgBox = document.getElementById(elementId);
+            msgBox.innerText = message;
+            msgBox.className = isError ? 'msg-box msg-error' : 'msg-box msg-success';
+            msgBox.style.display = 'block';
+            
+            setTimeout(() => {
+                msgBox.style.display = 'none';
+            }, 4000);
+        }
+
+        // 1. Guest Login Handler
+        function handleGuestLogin() {
+            window.location.href = '/login_guest';
+        }
+
+        // 2. Login Submit Handler
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.innerHTML = `<span>CONNECTING...</span> <i class="fas fa-spinner fa-spin"></i>`;
+            btn.style.opacity = '0.7';
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showMsg('loginMsg', data.message, false);
+                    setTimeout(() => {
+                        window.location.href = '/loading';
+                    }, 800);
+                } else {
+                    showMsg('loginMsg', data.message, true);
+                    btn.innerHTML = `<span>LOGIN</span> <i class="fas fa-chevron-right"></i>`;
+                    btn.style.opacity = '1';
+                }
+            } catch (err) {
+                console.error(err);
+                showMsg('loginMsg', 'Server Connection Error!', true);
+                btn.innerHTML = `<span>LOGIN</span> <i class="fas fa-chevron-right"></i>`;
+                btn.style.opacity = '1';
+            }
+        }
+
+        // 3. Register Submit Handler
+        async function handleRegister(event) {
+            event.preventDefault();
+            const phone = document.getElementById('regPhone').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm_password = document.getElementById('regConfirmPassword').value;
+            const btn = document.getElementById('regBtn');
+
+            btn.innerHTML = `<span>REGISTERING...</span> <i class="fas fa-spinner fa-spin"></i>`;
+            btn.style.opacity = '0.7';
+
+            try {
+                const res = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, username, password, confirm_password })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showMsg('regMsg', data.message, false);
+                    document.getElementById('loginUsername').value = username;
+                    document.getElementById('loginPassword').value = '';
+                    
+                    // 1.5s message show karne ke baad automatically login side flip karega
+                    setTimeout(() => {
+                        toggleFlip();
+                        showMsg('loginMsg', 'Account ready! Please Login.', false);
+                    }, 1500);
+                } else {
+                    showMsg('regMsg', data.message, true);
+                }
+            } catch (err) {
+                console.error(err);
+                showMsg('regMsg', 'Server Connection Error!', true);
+            } finally {
+                btn.innerHTML = `<span>REGISTER DRIVER</span> <i class="fas fa-arrow-rotate-right"></i>`;
+                btn.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!-- @ts-nocheck -->
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Player Profile</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
+}
+
+/* Center container */
+.profile-container{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* Main box */
+.profile-box{
+top: 40%;
+display:flex;
+width:900px;
+background:#222;
+border-radius:12px;
+padding:20px;
+box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+/* Left section (avatar) */
+.profile-left{
+width:200px;
+text-align:center;
+border-right:1px solid #555;
+padding:20px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+.profile-pic{
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:5px;
+border:3px solid white;
+}
+
+/* Middle section */
+.profile-middle{
+flex:1;
+padding:20px;
+border-right:1px solid #555;
+}
+
+/* Right section */
+.profile-right{
+flex:1;
+padding:20px;
+}
+
+/* Titles */
+h2,h3{
+margin-top:0;
+}
+
+/* Level bar */
+.level-bar{
+width:100%;
+height:12px;
+background:#444;
+border-radius:6px;
+margin-top:8px;
+}
+
+.level-fill{
+width:0%;   /* 🔥 fixed hatao */
+height:12px;
+background: linear-gradient(90deg, #00ffcc, #00ccff);
+box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ccff;
+border-radius:6px;
+transition: 0.8s ease; /* smooth animation */
+}
+
+/* race list */
+ul{
+padding-left:18px;
+}
+
+/* back button */
+.back-btn{
+margin-top:20px;
+padding:12px 25px;
+background: linear-gradient(45deg, #000000, #000000);
+border:none;
+color:white;
+border-radius:25px;
+cursor:pointer;
+font-weight:bold;
+font-size:14px;
+letter-spacing:1px;
+transition: all 0.3s ease;
+box-shadow: 0 0 10px rgba(193, 193, 193, 0.6);
+}
+
+/* Hover effect */
+.back-btn:hover{
+transform: scale(1.08);
+box-shadow: 0 0 20px rgb(3, 3, 3);
+}
+
+/* Click effect */
+.back-btn:active{
+transform: scale(0.95);
+}
+
+
+
+.back-btn{
+animation: glowPulse 2s infinite;
+}
+
+.race-table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+.race-table th{
+text-align:left;
+padding:6px 10px;
+color:#ffffff;
+border-bottom:2px solid #ffffff;
+}
+
+.race-table td{
+padding:5px 10px;
+border-bottom:1px solid #444;
+}
+
+.race-table tr:hover{
+background: rgba(0,255,255,0.1);
+transition: 0.2s;
+}
+
+.profile-right{
+flex:1;
+padding:20px;
+max-height:350px;      /* height fix */
+overflow-y:auto;      /* sirf yahi scroll hoga */
+}
+
+.section-title{
+margin-top:20px;
+margin-bottom:8px;
+padding-bottom:4px;
+border-bottom:2px solid #ffffff;
+color:#ffffff;
+font-size:22px;
+font-weight:bold;
+
+
+-webkit-text-stroke: 0.8px #000000;
+
+}
+
+.username{
+margin-top:10px;
+margin-bottom:0;
+}
+
+</style>
+
+</head>
+
+<body 
+data-currentxp="{{ current_xp }}" 
+data-maxxp="{{ max_xp }}"
+data-levelup="{{ level_up }}">
+
+<div class="profile-container">
+
+<div class="profile-box">
+
+<!-- LEFT -->
+<div class="profile-left">
+<img src="/static/image/profile1.png" class="profile-pic">
+<h2 class="username">{{ username }}</h2>
+<a href="/main_menu">
+<button class="back-btn">← Back To MainMenu</button>
+</a>
+
+</div>
+
+
+<!-- MIDDLE -->
+<div class="profile-middle">
+
+<h3 class="section-title">PlayerInfo</h3>
+
+<p><b>Username:</b> {{ username }}</p>
+<p><b>ID:</b> {{ player_id }}</p>
+
+
+
+<h3 class="section-title">Statistics</h3>
+
+<p><b>Total Score:</b> {{ total_score }}</p>
+
+<p id="levelText"><b>Level:</b> {{ level }}</p>
+<p><b>XP:</b> {{ current_xp }} / {{ max_xp }}</p>
+
+<div class="level-bar">
+<div class="level-fill"></div>
+</div>
+<p id="levelUpText" style="display:none; color: gold; font-weight:bold; font-size:20px;">
+🔥 LEVEL UP!
+</p>
+
+</div>
+
+
+<!-- RIGHT -->
+<div class="profile-right">
+
+<h3  class="section-title">Career Results (Last 10 Races)</h3>
+
+<table class="race-table">
+
+<tr>
+<th>Race</th>
+<th>Position</th>
+<th>Score</th>
+<th>Date</th>
+</tr>
+
+{% if races %}
+
+{% for race in races %}
+
+<tr>
+<td>{{ loop.index }}</td>
+<td>#{{ race[0] }}</td>
+<td>{{ race[1] }}</td>
+<td>{{ race[2] }}</td>
+</tr>
+
+{% endfor %}
+
+{% else %}
+
+<tr>
+<td colspan="4">No races played yet</td>
+</tr>
+
+{% endif %}
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+
+</body>
+</html>
