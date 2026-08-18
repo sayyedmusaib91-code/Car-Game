@@ -1,2 +1,5 @@
-
+*.db
+*.sqlite3
+static/sounds/
 sounds/
+__pycache__/
