@@ -3,7 +3,7 @@
 An enterprise-grade, cloud-deployed 3D WebGL car racing application seamlessly integrated with a Python Flask REST backend, PostgreSQL persistent storage, and AWS infrastructure fronted by Nginx with automated SSL/TLS encryption.
 
 * **Live Demo:** https://carclash.duckdns.org
-* **GitHub Repository:** https://github.com/sayyedmusaib91-code/Car-Game-project.git
+
 
 ---
 
@@ -13,6 +13,12 @@ Car Clash 3D demonstrates end-to-end cloud engineering and full-stack software d
 
 The project delivers a lag-free, browser-native 3D gaming experience while securely handling player authentication, session persistence, and dynamic user profiles via a hardened cloud production pipeline.
 
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/14a72338-b41f-4fd3-9944-c95b6e6a8525" />
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/2e5a62eb-a2c6-4791-89df-46c9edf0ddfd" />
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/cb7766fd-a5e7-4cc4-b2c8-e3f331ffa2ac" />
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/5104a9ec-0a05-46ea-b10b-283059658097" />
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/ba323a4f-89aa-40be-a2d8-c07d8ee314f8" />
+<img width="1833" height="891" alt="image" src="https://github.com/user-attachments/assets/2184cbdb-2919-4ea3-88f6-948452643e8b" />
 ---
 
 ## 🚀 Key Features
@@ -78,4 +84,4 @@ The project delivers a lag-free, browser-native 3D gaming experience while secur
 Cloud & DevOps Enthusiast | Computer Science Student  
 * **Portfolio:** https://musaib-portfolio.duckdns.org  
 * **GitHub:** https://github.com/sayyedmusaib91-code
-*
+* **LinkedIn:** https://www.linkedin.com/in/musaib-sayyed
