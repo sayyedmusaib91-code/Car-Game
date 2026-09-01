@@ -21,7 +21,7 @@ def get_db_connection():
     return conn
 
 def init_db():
-    """Drivers/Users aur Race Results tables create karta hai."""
+    """Drivers, Race Results, aur Friend Requests tables create karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -51,6 +51,18 @@ def init_db():
             race_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
+
+    # 3. Friend Requests & Friendships Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS friend_requests (
+            id SERIAL PRIMARY KEY,
+            sender_id INT NOT NULL REFERENCES drivers (id) ON DELETE CASCADE,
+            receiver_id INT NOT NULL REFERENCES drivers (id) ON DELETE CASCADE,
+            status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(sender_id, receiver_id)
+        );
+    ''')
     
     conn.commit()
     cursor.close()
@@ -60,7 +72,6 @@ def init_db():
 # --- Validation Helper Functions ---
 
 def is_username_taken(username):
-    """Check karta hai ki username pehle se exist karta hai ya nahi."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT 1 FROM drivers WHERE LOWER(username) = LOWER(%s);', (username,))
@@ -70,7 +81,6 @@ def is_username_taken(username):
     return exists
 
 def is_phone_registered(phone):
-    """Check karta hai ki phone number pehle se registered hai ya nahi."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT 1 FROM drivers WHERE phone = %s;', (phone,))
@@ -82,7 +92,6 @@ def is_phone_registered(phone):
 # --- Auth Functions ---
 
 def add_user(phone, username, password, player_id):
-    """app.py ke /register route ke liye naya driver add karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -100,7 +109,6 @@ def add_user(phone, username, password, player_id):
         conn.close()
 
 def check_user(username_or_phone, password):
-    """app.py ke /login route ke liye user verify karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -116,11 +124,9 @@ def check_user(username_or_phone, password):
 # --- Profile & Game Data Functions ---
 
 def get_profile_data(user_id):
-    """Driver profile aur race history fetch karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Driver data fetch
     cursor.execute('''
         SELECT username, player_id, level, total_score, coins 
         FROM drivers 
@@ -128,7 +134,6 @@ def get_profile_data(user_id):
     ''', (user_id,))
     user = cursor.fetchone()
     
-    # Race results fetch
     cursor.execute('''
         SELECT position, score, race_date 
         FROM race_results 
@@ -142,7 +147,6 @@ def get_profile_data(user_id):
     return user, races
 
 def save_race_result(user_id, position, score, coins_earned=0):
-    """Unity race complete hone par score aur position save karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -167,20 +171,159 @@ def save_race_result(user_id, position, score, coins_earned=0):
         cursor.close()
         conn.close()
 
-def get_leaderboard(limit=10):
-    """Top high score drivers fetch karta hai."""
+# --- Friend System Functions ---
+
+def search_driver_by_player_id(player_id, current_user_id):
+    """Player ID se kisi bhi user ki profile aur relation fetch karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT username, total_score, level, coins 
+        SELECT id, username, player_id, total_score, coins 
         FROM drivers 
-        ORDER BY total_score DESC 
-        LIMIT %s;
-    ''', (limit,))
-    leaderboard = [dict(row) for row in cursor.fetchall()]
+        WHERE player_id = %s;
+    ''', (player_id,))
+    target = cursor.fetchone()
+    
+    if not target:
+        cursor.close()
+        conn.close()
+        return None, "Driver not found"
+        
+    target_id = target['id']
+    total_score = target['total_score'] or 0
+    level = (total_score // 1000) + 1
+    current_xp = total_score % 1000
+    
+    # Check total races & wins
+    cursor.execute("SELECT COUNT(*), COUNT(CASE WHEN position = 1 THEN 1 END) FROM race_results WHERE user_id = %s", (target_id,))
+    races_count, wins_count = cursor.fetchone()
+    
+    # Relation status check (self, pending, accepted, none)
+    relation = "none"
+    if target_id == current_user_id:
+        relation = "self"
+    else:
+        cursor.execute('''
+            SELECT status, sender_id FROM friend_requests 
+            WHERE (sender_id = %s AND receiver_id = %s) OR (sender_id = %s AND receiver_id = %s);
+        ''', (current_user_id, target_id, target_id, current_user_id))
+        req = cursor.fetchone()
+        if req:
+            if req['status'] == 'accepted':
+                relation = 'friends'
+            elif req['sender_id'] == current_user_id:
+                relation = 'request_sent'
+            else:
+                relation = 'request_received'
+                
     cursor.close()
     conn.close()
-    return leaderboard
+    
+    return {
+        "id": target['id'],
+        "username": target['username'],
+        "player_id": target['player_id'],
+        "level": level,
+        "total_score": total_score,
+        "current_xp": current_xp,
+        "races_played": races_count or 0,
+        "races_won": wins_count or 0,
+        "relation": relation
+    }, None
+
+def send_friend_request(sender_id, receiver_player_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id FROM drivers WHERE player_id = %s;", (receiver_player_id,))
+        receiver = cursor.fetchone()
+        if not receiver:
+            return False, "Driver not found"
+            
+        receiver_id = receiver['id']
+        if sender_id == receiver_id:
+            return False, "You cannot send request to yourself"
+            
+        cursor.execute('''
+            INSERT INTO friend_requests (sender_id, receiver_id, status)
+            VALUES (%s, %s, 'pending')
+            ON CONFLICT (sender_id, receiver_id) DO UPDATE SET status = 'pending';
+        ''', (sender_id, receiver_id))
+        conn.commit()
+        return True, "Friend request sent successfully!"
+    except Exception as e:
+        return False, str(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_incoming_friend_requests(user_id):
+    """Aapko aayi hui pending friend requests fetch karta hai."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT fr.id as request_id, d.username, d.player_id, d.total_score, fr.created_at
+        FROM friend_requests fr
+        JOIN drivers d ON fr.sender_id = d.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.id DESC;
+    ''', (user_id,))
+    rows = cursor.fetchall()
+    
+    requests = []
+    for r in rows:
+        total_score = r['total_score'] or 0
+        level = (total_score // 1000) + 1
+        requests.append({
+            "request_id": r['request_id'],
+            "username": r['username'],
+            "player_id": r['player_id'],
+            "level": level,
+            "created_at": r['created_at'].strftime("%d %b, %H:%M") if r['created_at'] else ""
+        })
+    cursor.close()
+    conn.close()
+    return requests
+
+def respond_to_friend_request(request_id, user_id, action):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        if action == 'accept':
+            cursor.execute("UPDATE friend_requests SET status = 'accepted' WHERE id = %s AND receiver_id = %s;", (request_id, user_id))
+        else:
+            cursor.execute("DELETE FROM friend_requests WHERE id = %s AND receiver_id = %s;", (request_id, user_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_friends_list(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT d.username, d.player_id, d.total_score
+        FROM friend_requests fr
+        JOIN drivers d ON (d.id = CASE WHEN fr.sender_id = %s THEN fr.receiver_id ELSE fr.sender_id END)
+        WHERE (fr.sender_id = %s OR fr.receiver_id = %s) AND fr.status = 'accepted'
+        ORDER BY d.total_score DESC;
+    ''', (user_id, user_id, user_id))
+    rows = cursor.fetchall()
+    friends = []
+    for r in rows:
+        total_score = r['total_score'] or 0
+        friends.append({
+            "username": r['username'],
+            "player_id": r['player_id'],
+            "level": (total_score // 1000) + 1,
+            "total_score": total_score
+        })
+    cursor.close()
+    conn.close()
+    return friends
 
 if __name__ == '__main__':
     init_db()

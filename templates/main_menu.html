@@ -18,6 +18,11 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+input, select, textarea {
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+}
+
 body, html {
     width: 100vw;
     height: 100vh;
@@ -60,14 +65,43 @@ body, html {
 
 .ui-layer {
     position: relative;
-    z-index: 10;
+    z-index: 20;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 16px 28px;
+    pointer-events: auto;
 }
+
+/* IN-GAME TOAST NOTIFICATION HUD */
+#gameNotificationHUD {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(10, 14, 22, 0.95);
+    border: 2px solid #ffd000;
+    padding: 12px 28px;
+    border-radius: 8px;
+    box-shadow: 0 0 35px rgba(255, 208, 0, 0.5), inset 0 0 15px rgba(255, 208, 0, 0.15);
+    backdrop-filter: blur(12px);
+    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+#gameNotificationHUD.show { top: 30px; }
+.hud-notify-icon { font-size: 1.5rem; color: #ffd000; }
+.hud-notify-msg { font-family: 'Rajdhani', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: 1px; color: #ffffff; text-transform: uppercase; }
+#gameNotificationHUD.hud-success { border-color: #22c55e; box-shadow: 0 0 35px rgba(34, 197, 94, 0.5); }
+#gameNotificationHUD.hud-success .hud-notify-icon { color: #22c55e; }
+#gameNotificationHUD.hud-error { border-color: #ef4444; box-shadow: 0 0 35px rgba(239, 68, 68, 0.5); }
+#gameNotificationHUD.hud-error .hud-notify-icon { color: #ef4444; }
 
 /* 1. TOP HEADER */
 .top-header {
@@ -76,20 +110,20 @@ body, html {
     align-items: center;
     width: 100%;
     height: 50px;
+    position: relative;
+    z-index: 25;
 }
 
-/* Top Left Level / User Info */
 .user-profile-badge {
     display: flex;
     align-items: center;
     gap: 12px;
     cursor: pointer;
     transition: transform 0.2s;
+    pointer-events: auto;
 }
 
-.user-profile-badge:hover {
-    transform: scale(1.03);
-}
+.user-profile-badge:hover { transform: scale(1.03); }
 
 .level-shield {
     width: 38px;
@@ -107,55 +141,14 @@ body, html {
     font-style: italic;
 }
 
-.user-meta-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
+.user-meta-info { display: flex; flex-direction: column; gap: 2px; }
+.user-name-title { font-size: 1.05rem; font-weight: 900; letter-spacing: 1px; font-style: italic; color: #ffffff; text-transform: uppercase; }
+.xp-container { display: flex; flex-direction: column; gap: 3px; }
+.xp-text { font-size: 0.68rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.5px; }
+.xp-text span { color: #22c55e; }
+.xp-bar-track { width: 130px; height: 4px; background: rgba(255, 255, 255, 0.15); border-radius: 2px; overflow: hidden; }
+.xp-bar-fill { width: 0%; height: 100%; background: #22c55e; box-shadow: 0 0 8px #22c55e; transition: width 0.6s ease; }
 
-.user-name-title {
-    font-size: 1.05rem;
-    font-weight: 900;
-    letter-spacing: 1px;
-    font-style: italic;
-    color: #ffffff;
-    text-transform: uppercase;
-}
-
-.xp-container {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.xp-text {
-    font-size: 0.68rem;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 0.5px;
-}
-
-.xp-text span {
-    color: #22c55e;
-}
-
-.xp-bar-track {
-    width: 130px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.xp-bar-fill {
-    width: 0%;
-    height: 100%;
-    background: #22c55e;
-    box-shadow: 0 0 8px #22c55e;
-    transition: width 0.6s ease;
-}
-
-/* Top Right Currencies & Quick Actions */
 .top-right-bar {
     display: flex;
     align-items: center;
@@ -166,48 +159,45 @@ body, html {
     gap: 18px;
     clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
     box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    pointer-events: auto;
 }
 
-.currency-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 800;
-    font-size: 0.88rem;
-}
-
-.curr-icon {
-    font-size: 0.9rem;
-}
-
+.currency-pill { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.88rem; }
+.curr-icon { font-size: 0.9rem; }
 .cash-icon { color: #22c55e; }
 .diamond-icon { color: #38bdf8; }
 .fuel-icon { color: #eab308; }
-
-.fuel-plus {
-    color: #ffd000;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-
-.top-divider {
-    width: 1px;
-    height: 16px;
-    background: rgba(255, 255, 255, 0.15);
-}
+.fuel-plus { color: #ffd000; font-size: 0.8rem; cursor: pointer; }
+.top-divider { width: 1px; height: 16px; background: rgba(255, 255, 255, 0.15); }
 
 .header-action-btn {
     background: transparent;
     border: none;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     cursor: pointer;
     transition: transform 0.2s, color 0.2s;
+    position: relative;
+    pointer-events: auto;
 }
 
-.header-action-btn:hover {
-    color: #ffd000;
-    transform: scale(1.15);
+.header-action-btn:hover { color: #ffd000; transform: scale(1.15); }
+
+.mail-badge-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 900;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px #ef4444;
 }
 
 /* 2. MAIN CENTER AREA */
@@ -219,15 +209,16 @@ body, html {
     margin: 4px 0;
     position: relative;
     max-height: calc(100vh - 140px);
+    z-index: 25;
 }
 
-/* Left Navigation Cards */
 .left-menu-column {
     display: flex;
     flex-direction: column;
     gap: 7px;
     width: 280px;
-    z-index: 15;
+    z-index: 30;
+    pointer-events: auto;
 }
 
 .menu-card {
@@ -244,6 +235,7 @@ body, html {
     transition: all 0.2s ease;
     text-decoration: none;
     color: white;
+    pointer-events: auto !important;
 }
 
 .menu-card:hover {
@@ -252,33 +244,11 @@ body, html {
     transform: translateX(6px);
 }
 
-.menu-card-left {
-    display: flex;
-    flex-direction: column;
-}
+.menu-card-left { display: flex; flex-direction: column; }
+.menu-card-title { font-size: 1.1rem; font-weight: 900; font-style: italic; letter-spacing: 1px; text-transform: uppercase; }
+.menu-card-sub { font-size: 0.58rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.8px; text-transform: uppercase; }
+.menu-card-icon { font-size: 1.1rem; color: rgba(255, 255, 255, 0.4); }
 
-.menu-card-title {
-    font-size: 1.1rem;
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.menu-card-sub {
-    font-size: 0.58rem;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-}
-
-.menu-card-icon {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-/* Featured Yellow CAREER Card */
 .menu-card-career {
     background: linear-gradient(135deg, #ffd000 0%, #eab308 100%);
     color: #000;
@@ -293,7 +263,6 @@ body, html {
     transform: translateX(8px) scale(1.02);
 }
 
-/* Right Season Card */
 .season-banner-card {
     width: 270px;
     background: rgba(15, 17, 26, 0.85);
@@ -304,27 +273,14 @@ body, html {
     position: relative;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     padding: 12px 16px;
-    z-index: 15;
+    z-index: 30;
     background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.35), transparent 70%);
     align-self: flex-start;
+    pointer-events: auto;
 }
 
-.season-tag {
-    font-size: 0.75rem;
-    font-weight: 900;
-    font-style: italic;
-    color: #c084fc;
-    letter-spacing: 1px;
-}
-
-.season-title {
-    font-size: 1.18rem;
-    font-weight: 900;
-    font-style: italic;
-    color: #ffffff;
-    margin-bottom: 8px;
-}
-
+.season-tag { font-size: 0.75rem; font-weight: 900; font-style: italic; color: #c084fc; letter-spacing: 1px; }
+.season-title { font-size: 1.18rem; font-weight: 900; font-style: italic; color: #ffffff; margin-bottom: 8px; }
 .season-btn {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -337,11 +293,7 @@ body, html {
     transition: all 0.2s;
     border-radius: 3px;
 }
-
-.season-btn:hover {
-    background: #ffffff;
-    color: #000000;
-}
+.season-btn:hover { background: #ffffff; color: #000000; }
 
 /* 3. CENTER CAR DISPLAY */
 #carDisplay {
@@ -368,31 +320,25 @@ body, html {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 22px;
-    width: 38px;
-    height: 38px;
+    font-size: 26px;
+    width: 44px;
+    height: 44px;
     display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: rgba(10, 10, 10, 0.9);
-    border: 1.5px solid #ffffff;
-    border-radius: 4px;
+    background: rgba(10, 14, 22, 0.85);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
     color: #ffffff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-    z-index: 10;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    z-index: 60;
     transition: all 0.2s;
 }
 
-#carDisplay .arrow-btn:first-child { left: -45px; }
-#carDisplay .arrow-btn:last-child { right: -45px; }
-
-.arrow-btn:hover {
-    background: #ffd000;
-    border-color: #ffd000;
-    color: #000;
-    transform: translateY(-50%) scale(1.12);
-}
+#carDisplay .arrow-btn:first-child { left: -75px; }
+#carDisplay .arrow-btn:last-child { right: -75px; }
+.arrow-btn:hover { background: #ffd000; border-color: #ffd000; color: #000; transform: translateY(-50%) scale(1.15); }
 
 .lock-overlay {
     position: absolute;
@@ -417,16 +363,13 @@ body, html {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    z-index: 20;
+    z-index: 25;
     height: 52px;
+    position: relative;
+    pointer-events: auto;
 }
 
-/* Social & Gift Icons */
-.social-links-strip {
-    display: flex;
-    gap: 8px;
-}
-
+.social-links-strip { display: flex; gap: 8px; }
 .social-circle-btn {
     width: 38px;
     height: 38px;
@@ -444,12 +387,7 @@ body, html {
     position: relative;
     text-decoration: none;
 }
-
-.social-circle-btn:hover {
-    background: #ffffff;
-    color: #000;
-    transform: translateY(-2px);
-}
+.social-circle-btn:hover { background: #ffffff; color: #000; transform: translateY(-2px); }
 
 .gift-badge {
     position: absolute;
@@ -467,13 +405,7 @@ body, html {
     justify-content: center;
 }
 
-/* Bottom Action Buttons */
-.bottom-play-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
+.bottom-play-group { display: flex; align-items: center; gap: 12px; }
 .quick-race-btn {
     background: rgba(15, 17, 21, 0.9);
     backdrop-filter: blur(10px);
@@ -485,28 +417,13 @@ body, html {
     cursor: pointer;
     clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
     transition: all 0.2s;
+    pointer-events: auto !important;
 }
+.quick-race-btn:hover { background: rgba(255, 255, 255, 0.15); }
+.quick-race-btn.disabled-btn { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; }
 
-.quick-race-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.quick-race-title {
-    font-size: 0.95rem;
-    font-weight: 900;
-    font-style: italic;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.quick-race-sub {
-    font-size: 0.58rem;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 1px;
-}
+.quick-race-title { font-size: 0.95rem; font-weight: 900; font-style: italic; color: #ffffff; display: flex; align-items: center; gap: 6px; }
+.quick-race-sub { font-size: 0.58rem; font-weight: 800; color: #94a3b8; letter-spacing: 1px; }
 
 .golden-play-btn {
     background: linear-gradient(135deg, #ffd000 0%, #eab308 100%);
@@ -524,13 +441,10 @@ body, html {
     align-items: center;
     gap: 8px;
     transition: all 0.2s ease;
+    pointer-events: auto !important;
 }
-
-.golden-play-btn:hover {
-    background: linear-gradient(135deg, #ffe033 0%, #facc15 100%);
-    transform: scale(1.04);
-    box-shadow: 0 0 40px rgba(234, 179, 8, 0.65);
-}
+.golden-play-btn:hover { background: linear-gradient(135deg, #ffe033 0%, #facc15 100%); transform: scale(1.04); box-shadow: 0 0 40px rgba(234, 179, 8, 0.65); }
+.golden-play-btn.disabled-btn { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; box-shadow: none; }
 
 /* ========================================================
    CAR SELECTION MODE HUD
@@ -543,303 +457,606 @@ body, html {
     width: 100vw;
     height: 100vh;
     z-index: 50;
-    padding: 30px 40px;
+    padding: 16px 28px 20px 28px;
     pointer-events: none;
-    background: rgba(0,0,0,0.65);
+    background: transparent;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.hud-interactive { pointer-events: auto; }
+.hud-interactive { pointer-events: auto !important; }
 
-.car-inspect-header {
+.car-select-top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
-.car-inspect-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #ffd000;
-    text-shadow: 0 0 15px rgba(255, 208, 0, 0.4);
-}
-
-.car-inspect-title span { color: #94a3b8; font-size: 1.2rem; margin-left: 10px; font-family: 'Rajdhani'; }
-
-.car-specs-panel {
-    position: absolute;
-    left: 40px;
-    top: 130px;
-    width: 330px;
-    background: rgba(10, 10, 10, 0.95);
-    border: 1.5px solid rgba(255, 208, 0, 0.3);
-    border-radius: 8px;
-    padding: 22px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+.car-select-back-title {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
 }
 
-.spec-item {
+.car-select-back-title i { font-size: 1.2rem; transition: transform 0.2s; }
+.car-select-back-title:hover i { transform: translateX(-4px); color: #ffd000; }
+.car-select-back-title span { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; }
+
+.car-select-currencies {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 12px;
 }
 
-.spec-labels {
-    display: flex;
-    justify-content: space-between;
+.lvl-badge-pill {
     font-family: 'Rajdhani', sans-serif;
     font-size: 0.95rem;
-    font-weight: 700;
-}
-
-.spec-bar-track {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.spec-bar-fill {
-    height: 100%;
-    background: #ffd000;
-    box-shadow: 0 0 8px rgba(255, 208, 0, 0.6);
-    transition: width 0.3s ease;
-}
-
-.inspect-action-footer {
-    position: absolute;
-    bottom: 35px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
-}
-
-.inspect-btn {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.1rem;
     font-weight: 800;
-    letter-spacing: 1.5px;
-    padding: 12px 40px;
-    border-radius: 6px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(18, 22, 34, 0.85);
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.car-specs-cluster {
+    position: absolute;
+    left: 28px;
+    top: 85px;
+    width: 285px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 55;
+}
+
+.car-brand-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ffd000;
+    text-transform: uppercase;
+}
+
+.car-model-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.car-rank-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1px;
+}
+
+.rank-badge-square {
+    background: #8b5cf6;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 900;
+    padding: 2px 7px;
+    border-radius: 3px;
+}
+
+.rank-num-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+.specs-bars-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(12, 16, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    backdrop-filter: blur(10px);
+}
+
+.spec-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.spec-name-label { display: flex; align-items: center; gap: 6px; width: 92px; }
+.spec-track { flex: 1; height: 5px; background: rgba(255, 255, 255, 0.12); border-radius: 3px; margin: 0 8px; overflow: hidden; }
+.spec-fill { height: 100%; background: #ffd000; box-shadow: 0 0 8px rgba(255, 208, 0, 0.6); transition: width 0.3s ease; }
+.spec-value-text { width: 55px; text-align: right; font-family: 'Rajdhani', sans-serif; font-weight: 800; color: #ffffff; font-size: 0.8rem; }
+
+.car-select-bottom-deck {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 55;
+}
+
+.top-deck-controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.deck-filter-btns { display: flex; gap: 10px; }
+.deck-action-pill {
+    background: rgba(14, 18, 28, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 5px 14px;
+    border-radius: 4px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    pointer-events: auto !important;
+}
+.deck-action-pill:hover { background: rgba(255, 255, 255, 0.2); }
+
+.golden-select-car-btn {
+    background: linear-gradient(135deg, #ffd000 0%, #eab308 100%);
     border: none;
-    transition: all 0.2s ease;
-}
-
-.btn-equip {
-    background: #ffd000;
     color: #000000;
-    box-shadow: 0 0 15px rgba(255, 208, 0, 0.3);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    padding: 8px 34px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(234, 179, 8, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    pointer-events: auto !important;
 }
-
-.btn-equip:hover { transform: scale(1.05); }
-
-.btn-equip.locked-btn {
+.golden-select-car-btn:hover { background: linear-gradient(135deg, #ffe033 0%, #facc15 100%); transform: scale(1.04); }
+.golden-select-car-btn.locked-btn {
     background: #ef4444 !important;
     color: #ffffff !important;
     cursor: not-allowed;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }
 
-.btn-back {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-    border: 1px solid rgba(255,255,255,0.3);
+.car-cards-strip-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 2px 2px 4px 2px;
+}
+.car-cards-strip-row::-webkit-scrollbar { height: 4px; }
+.car-cards-strip-row::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 2px; }
+
+.mini-car-selector-card {
+    min-width: 140px;
+    background: rgba(14, 18, 28, 0.9);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s;
+    pointer-events: auto !important;
+}
+.mini-car-selector-card:hover { background: rgba(24, 30, 48, 0.98); border-color: rgba(255, 208, 0, 0.4); transform: translateY(-2px); }
+.mini-car-selector-card.active-card {
+    border-color: #38bdf8 !important;
+    background: rgba(20, 28, 44, 0.98) !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
 }
 
-.btn-back:hover { background: #ef4444; border-color: #ef4444; }
+.mini-card-brand { font-size: 0.58rem; font-weight: 800; color: #94a3b8; font-family: 'Rajdhani'; }
+.mini-card-model { font-size: 0.7rem; font-weight: 900; color: #ffffff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini-card-img-box { height: 40px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+.mini-card-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); }
+.mini-card-rank { background: #8b5cf6; color: white; font-family: 'Orbitron', sans-serif; font-size: 0.55rem; font-weight: 900; padding: 1px 5px; border-radius: 2px; width: fit-content; }
 
 /* ========================================================
-   MAP SELECTION MODE HUD
+   RIGHT-SIDE SLIDING FRIENDS DRAWER
    ======================================================== */
-#mapSelectionHUD {
+.friends-drawer-backdrop {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(5, 5, 5, 0.95);
-    z-index: 60;
-    padding: 30px 40px;
-    flex-direction: column;
-    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 99990;
 }
 
-.map-inspect-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.map-display-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.friends-drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
     width: 440px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0e121a 0%, #080a0f 100%);
+    border-left: 2px solid rgba(255, 208, 0, 0.4);
+    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.95);
+    z-index: 99999;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
+    pointer-events: auto;
+}
+
+.friends-drawer-panel.open { transform: translateX(0); }
+
+.drawer-header-strip {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(20, 25, 36, 0.6);
 }
 
-.map-card-box {
-    width: 100%;
-    background: rgba(15, 15, 15, 0.95);
-    border: 2px solid #ffd000;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 0 30px rgba(255, 208, 0, 0.2);
-    position: relative;
-}
+.drawer-title-box { display: flex; align-items: center; gap: 12px; }
+.drawer-title-box i { font-size: 1.4rem; color: #ffd000; }
+.drawer-title-box h2 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 900; letter-spacing: 1.5px; color: #ffffff; }
 
-.map-icon-cover {
-    width: 100%;
-    height: 180px;
-    background: #111111;
+.drawer-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 4rem;
-    color: #ffd000;
-}
-
-.map-details {
-    padding: 18px 22px;
-}
-
-.map-name-label {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin-bottom: 6px;
-}
-
-.map-stats-text {
-    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
     font-size: 1rem;
-    font-weight: 700;
-    color: #94a3b8;
+    pointer-events: auto !important;
+}
+.drawer-close-btn:hover { background: #ef4444; border-color: #ef4444; color: white; transform: rotate(90deg); }
+
+.drawer-tabs-row {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 16px;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.map-lock-overlay {
+.drawer-tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    pointer-events: auto !important;
+}
+.drawer-tab:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+.drawer-tab.active { color: #000; background: #ffd000; box-shadow: 0 0 15px rgba(255, 208, 0, 0.35); }
+.tab-badge { background: #ef4444; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+
+.drawer-body-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.drawer-body-container::-webkit-scrollbar { width: 5px; }
+.drawer-body-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+.drawer-search-box { display: flex; gap: 8px; margin-bottom: 6px; position: relative; }
+.drawer-search-input {
+    flex: 1;
+    background: #000000 !important;
+    border: 1.5px solid rgba(255, 208, 0, 0.6) !important;
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    outline: none !important;
+    caret-color: #ffd000 !important;
+    pointer-events: auto !important;
+}
+.drawer-search-input:focus { box-shadow: 0 0 12px rgba(255, 208, 0, 0.4) !important; border-color: #ffd000 !important; }
+.drawer-search-btn { background: #ffd000; color: #000; border: none; padding: 0 18px; border-radius: 6px; font-weight: 900; font-size: 0.9rem; cursor: pointer; letter-spacing: 1px; transition: transform 0.15s; pointer-events: auto !important; }
+.drawer-search-btn:hover { transform: scale(1.05); }
+
+.friend-pro-card {
+    background: rgba(22, 27, 39, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+.friend-pro-card:hover {
+    background: rgba(30, 38, 54, 0.95);
+    border-color: rgba(255, 208, 0, 0.4);
+    transform: translateX(-4px);
+}
+
+.friend-card-left { display: flex; align-items: center; gap: 12px; }
+.friend-avatar-wrap { position: relative; width: 46px; height: 46px; }
+.friend-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.2);
+}
+
+.status-indicator-dot { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #0e121a; }
+.status-online { background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: pulseGlow 1.8s infinite; }
+@keyframes pulseGlow { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+.status-offline { background: #64748b; }
+
+.friend-meta-data { display: flex; flex-direction: column; gap: 2px; }
+.friend-name-row { display: flex; align-items: center; gap: 8px; }
+.friend-username { font-family: 'Rajdhani', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; color: #ffffff; text-transform: uppercase; }
+.friend-lvl-badge { background: rgba(255, 208, 0, 0.15); border: 1px solid #ffd000; color: #ffd000; font-size: 0.65rem; font-weight: 900; padding: 1px 5px; border-radius: 3px; font-family: 'Orbitron'; }
+.friend-sub-status { font-size: 0.72rem; color: #94a3b8; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+.friend-card-right { display: flex; align-items: center; gap: 8px; }
+.action-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    pointer-events: auto !important;
+}
+.action-icon-btn:hover { background: #ffd000; color: #000; border-color: #ffd000; transform: scale(1.1); }
+.invite-race-btn {
+    background: #22c55e;
+    color: #000;
+    border: none;
+    font-weight: 900;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s;
+    pointer-events: auto !important;
+}
+.invite-race-btn:hover { background: #16a34a; color: white; transform: scale(1.05); }
+
+.searched-result-box {
+    display: none;
+    background: rgba(255, 208, 0, 0.04);
+    border: 1.5px solid rgba(255, 208, 0, 0.3);
+    border-radius: 8px;
+    padding: 16px;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ========================================================
+   FULL FRIEND PROFILE INSPECTION POPUP MODAL
+   ======================================================== */
+#inspectPlayerProfileModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(3, 5, 10, 0.88);
+    backdrop-filter: blur(12px);
+    z-index: 9999999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    pointer-events: auto !important;
+}
+
+.profile-inspect-card-box {
+    width: 880px;
+    max-height: 92vh;
+    background: #090c14;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    position: relative;
+    overflow-y: auto;
+    pointer-events: auto !important;
+}
+
+.profile-inspect-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+    z-index: 20;
+    pointer-events: auto !important;
+}
+.profile-inspect-close-btn:hover { background: #ef4444; border-color: #ef4444; color: white; }
+
+.inspect-hero-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    background: url("/static/image/pr1.png") right center/cover no-repeat;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+.inspect-hero-card::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    color: #ef4444;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    font-size: 28px;
-    font-weight: 900;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 2px;
+    background: linear-gradient(90deg, rgba(8, 10, 16, 0.96) 0%, rgba(8, 10, 16, 0.88) 45%, rgba(8, 10, 16, 0.3) 100%);
+    z-index: 1;
 }
 
-.map-arrow-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 32px;
-    width: 52px;
-    height: 52px;
+.inspect-user-identity {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    z-index: 2;
+}
+
+.inspect-avatar-glow {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+    padding: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid #ffd000;
-    border-radius: 8px;
-    color: #ffd000;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-    transition: all 0.2s;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
 }
 
-.map-arrow-btn:hover {
-    background: #ffd000;
-    color: #000;
-    transform: translateY(-50%) scale(1.12);
-}
-
-.map-arrow-left { left: -90px; }
-.map-arrow-right { right: -90px; }
-
-/* MODALS */
-#settings-menu {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    background: rgba(10, 10, 10, 0.98);
-    border: 2px solid #ffd000;
-    border-radius: 8px;
-    padding: 24px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.95);
-    display: none;
-    flex-direction: column;
-    gap: 14px;
-    z-index: 200;
-}
-
-#settings-menu h3 { font-size: 1.5rem; text-align: center; color: #ffd000; }
-#settings-menu label { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 700; }
-#settings-menu select { background: #222; color: white; border: 1px solid #444; padding: 4px 8px; font-weight: bold; }
-.modal-btn { padding: 10px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 4px; }
-.logout-btn { background: #ef4444; color: white; margin-top: 4px; }
-.close-btn { background: #333333; color: white; }
-
-#comingSoonPopup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #000;
-    border: 2px solid #ffd000;
-    color: #ffd000;
-    padding: 25px 45px;
-    font-size: 1.8rem;
-    font-weight: 900;
-    font-style: italic;
-    box-shadow: 0 0 30px rgba(255,208,0,0.4);
-    z-index: 250;
-    border-radius: 8px;
-}
-
-#matchText {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.95);
-    border: 3px solid #ffd000;
-    padding: 20px 40px;
-    font-size: 2rem;
-    font-style: italic;
-    color: #ffffff;
-    box-shadow: 0 0 30px rgba(255, 208, 0, 0.4);
-    display: none;
+.inspect-avatar-inner {
+    width: 100%;
+    height: 100%;
+    background: #090c14;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
-    gap: 20px;
-    z-index: 150;
-    border-radius: 8px;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: white;
 }
 
-/* ========================================================
-   CINEMATIC GAME LOADING OVERLAY
-   ======================================================== */
+.inspect-details-col { display: flex; flex-direction: column; gap: 4px; }
+.inspect-title-name { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+.vip-pill-legend { background: #8b5cf6; color: white; font-size: 0.6rem; font-weight: 900; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; width: fit-content; text-transform: uppercase; }
+
+.inspect-xp-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.inspect-level-tag { background: #8b5cf6; color: white; font-size: 0.78rem; font-weight: 900; padding: 2px 8px; border-radius: 3px; }
+.inspect-xp-text { font-size: 0.72rem; font-weight: 800; color: #94a3b8; }
+.inspect-xp-track { width: 200px; height: 5px; background: rgba(255, 255, 255, 0.12); border-radius: 3px; overflow: hidden; }
+.inspect-xp-fill { height: 100%; background: linear-gradient(90deg, #8b5cf6, #c084fc); width: 65%; }
+
+.inspect-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.inspect-stat-card {
+    background: rgba(15, 18, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.inspect-stat-head { font-size: 0.62rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
+.inspect-stat-val { font-size: 1.25rem; font-weight: 900; color: #ffffff; font-family: 'Rajdhani'; }
+.inspect-stat-foot { font-size: 0.58rem; color: #64748b; font-weight: 700; }
+
+.inspect-lower-split {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 12px;
+}
+
+.inspect-fav-car-box {
+    background: rgba(15, 18, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.inspect-achieve-panel {
+    background: rgba(15, 18, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.inspect-achieve-row { display: flex; justify-content: space-between; gap: 6px; margin: 6px 0; }
+.inspect-badge-unit { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; flex: 1; }
+.inspect-badge-circle { width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
+/* CINEMATIC ASYNC LOADING OVERLAY */
 #gameLoadingScreen {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -855,48 +1072,12 @@ body, html {
     transition: opacity 0.5s ease;
 }
 
-.loader-top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.loader-logo-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: #ffffff;
-}
-
-.loader-logo-title span {
-    color: #ffd000;
-}
-
-.loader-track-badge {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 6px 18px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.loader-center-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.loader-tachometer-spin {
-    font-size: 3.5rem;
-    color: #ffd000;
-    animation: pulseSpin 1.4s infinite ease-in-out;
-    filter: drop-shadow(0 0 20px rgba(255, 208, 0, 0.6));
-}
+.loader-top-header { display: flex; justify-content: space-between; align-items: center; }
+.loader-logo-title { font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: 3px; color: #ffffff; }
+.loader-logo-title span { color: #ffd000; }
+.loader-track-badge { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 800; color: #94a3b8; background: rgba(255, 255, 255, 0.08); padding: 6px 18px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15); }
+.loader-center-content { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.loader-tachometer-spin { font-size: 3.5rem; color: #ffd000; animation: pulseSpin 1.4s infinite ease-in-out; filter: drop-shadow(0 0 20px rgba(255, 208, 0, 0.6)); }
 
 @keyframes pulseSpin {
     0% { transform: scale(1) rotate(0deg); }
@@ -904,63 +1085,81 @@ body, html {
     100% { transform: scale(1) rotate(360deg); }
 }
 
-.loader-status-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #ffffff;
-    font-style: italic;
-}
+.loader-status-text { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; color: #ffffff; font-style: italic; }
+.loader-tip-box { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; background: rgba(0, 0, 0, 0.6); border-left: 3px solid #ffd000; padding: 8px 18px; border-radius: 0 4px 4px 0; }
+.loader-bottom-bar-wrapper { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.loader-percent-row { display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 800; color: #94a3b8; }
+.loader-percent-row span:last-child { color: #ffd000; font-size: 1.4rem; }
+.loader-progress-track { width: 100%; height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); }
+.loader-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #eab308 0%, #ffd000 100%); box-shadow: 0 0 15px #ffd000; transition: width 0.2s ease-out; }
 
-.loader-tip-box {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #cbd5e1;
-    background: rgba(0, 0, 0, 0.6);
-    border-left: 3px solid #ffd000;
-    padding: 8px 18px;
-    border-radius: 0 4px 4px 0;
-}
-
-.loader-bottom-bar-wrapper {
-    display: flex;
+/* MODALS */
+#settings-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: rgba(10, 10, 10, 0.98);
+    border: 2px solid #ffd000;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.95);
     flex-direction: column;
-    gap: 8px;
-    width: 100%;
+    gap: 14px;
+    z-index: 200;
 }
 
-.loader-percent-row {
-    display: flex;
+#settings-menu h3 { font-size: 1.5rem; text-align: center; color: #ffd000; }
+#settings-menu label { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 700; }
+#settings-menu select { background: #222; color: white; border: 1px solid #444; padding: 4px 8px; font-weight: bold; }
+.modal-btn { padding: 10px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 4px; }
+.logout-btn { background: #ef4444; color: white; margin-top: 4px; }
+.close-btn { background: #333333; color: white; }
+
+#matchText {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: 3px solid #ffd000;
+    padding: 20px 40px;
+    font-size: 2rem;
+    font-style: italic;
+    color: #ffffff;
+    box-shadow: 0 0 30px rgba(255, 208, 0, 0.4);
+    align-items: center;
+    gap: 20px;
+    z-index: 150;
+    border-radius: 8px;
+}
+
+#mapSelectionHUD {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 5, 5, 0.95);
+    z-index: 60;
+    padding: 30px 40px;
+    flex-direction: column;
     justify-content: space-between;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #94a3b8;
 }
 
-.loader-percent-row span:last-child {
-    color: #ffd000;
-    font-size: 1.4rem;
-}
-
-.loader-progress-track {
-    width: 100%;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.loader-progress-fill {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #eab308 0%, #ffd000 100%);
-    box-shadow: 0 0 15px #ffd000;
-    transition: width 0.2s ease-out;
-}
+.map-inspect-header { display: flex; justify-content: space-between; align-items: center; }
+.map-display-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 440px; display: flex; flex-direction: column; align-items: center; }
+.map-card-box { width: 100%; background: rgba(15, 15, 15, 0.95); border: 2px solid #ffd000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 30px rgba(255, 208, 0, 0.2); position: relative; }
+.map-icon-cover { width: 100%; height: 180px; background: #111111; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #ffd000; }
+.map-details { padding: 18px 22px; }
+.map-name-label { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
+.map-stats-text { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: #94a3b8; }
+.map-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); color: #ef4444; display: none; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+.map-arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); font-size: 32px; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(0, 0, 0, 0.85); border: 2px solid #ffd000; border-radius: 8px; color: #ffd000; box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); transition: all 0.2s; }
+.map-arrow-btn:hover { background: #ffd000; color: #000; transform: translateY(-50%) scale(1.12); }
+.map-arrow-left { left: -90px; }
+.map-arrow-right { right: -90px; }
 </style>
 </head>
 
@@ -969,11 +1168,142 @@ body, html {
   data-maxxp="{{ max_xp or 1000 }}"
   data-level="{{ level or 1 }}">
 
+<!-- 1. FULL FRIEND PROFILE INSPECTION POPUP -->
+<div id="inspectPlayerProfileModal" style="display: none;">
+    <div class="profile-inspect-card-box">
+        <button class="profile-inspect-close-btn" onclick="closeInspectProfileModal()">✕</button>
+
+        <div class="inspect-hero-card">
+            <div class="inspect-user-identity">
+                <div class="inspect-avatar-glow">
+                    <div class="inspect-avatar-inner" id="inspectAvatarLetter">M</div>
+                </div>
+                <div class="inspect-details-col">
+                    <div class="inspect-title-name" id="inspectUsernameText">MUSAIB3</div>
+                    <span class="vip-pill-legend">LEGEND</span>
+                    <div class="inspect-xp-row">
+                        <span class="inspect-level-tag" id="inspectLevelTag">3</span>
+                        <span class="inspect-xp-text" id="inspectXpText">650 / 1000 XP</span>
+                        <div class="inspect-xp-track">
+                            <div class="inspect-xp-fill" id="inspectXpFillBar"></div>
+                        </div>
+                    </div>
+                    <div style="font-size:0.65rem; color:#94a3b8; font-weight:700; margin-top:2px;">
+                        JOINED: RECENT &bull; PLAYER ID: <span id="inspectPlayerIdText">4709868065</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="inspect-stats-grid">
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="far fa-clock" style="color:#a855f7;"></i> TIME DRIVEN</div>
+                <div class="inspect-stat-val">0h 0m</div>
+                <div class="inspect-stat-foot">Time spent in game</div>
+            </div>
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="fas fa-trophy" style="color:#eab308;"></i> RACES WON</div>
+                <div class="inspect-stat-val" id="inspectStatWins">0</div>
+                <div class="inspect-stat-foot">Total Wins</div>
+            </div>
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="fas fa-flag-checkered" style="color:#38bdf8;"></i> RACES PLAYED</div>
+                <div class="inspect-stat-val" id="inspectStatRaces">6</div>
+                <div class="inspect-stat-foot">Total Races</div>
+            </div>
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="fas fa-bolt" style="color:#eab308;"></i> TOTAL SCORE</div>
+                <div class="inspect-stat-val" id="inspectStatScore">2650</div>
+                <div class="inspect-stat-foot">Career Points</div>
+            </div>
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="fas fa-road" style="color:#22c55e;"></i> DISTANCE</div>
+                <div class="inspect-stat-val">0 km</div>
+                <div class="inspect-stat-foot">Total Distance</div>
+            </div>
+            <div class="inspect-stat-card">
+                <div class="inspect-stat-head"><i class="fas fa-coins" style="color:#22c55e;"></i> CASH EARNED</div>
+                <div class="inspect-stat-val">0</div>
+                <div class="inspect-stat-foot">Total Credits</div>
+            </div>
+        </div>
+
+        <div class="inspect-lower-split">
+            <div class="inspect-fav-car-box">
+                <div>
+                    <div style="font-size:0.6rem; font-weight:800; color:#64748b; letter-spacing:1px;">FAVORITE CAR</div>
+                    <div style="font-size:1.05rem; font-weight:900; font-style:italic;">BUGATTI CHIRON</div>
+                    <span style="background:#8b5cf6; color:white; font-size:0.65rem; font-weight:900; padding:1px 6px; border-radius:3px;">CLASS S | 900</span>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin:4px 0;">
+                    <div style="font-size:0.68rem; font-weight:800; color:#94a3b8; display:flex; flex-direction:column; gap:2px;">
+                        <span>TOP SPEED: <b style="color:white;">420 KM/H</b></span>
+                        <span>POWER: <b style="color:white;">1500 HP</b></span>
+                        <span>0-100 KM/H: <b style="color:white;">2.4 s</b></span>
+                    </div>
+                    <img src="/static/image/n1.png" style="width:190px; height:75px; object-fit:contain; filter:drop-shadow(0 8px 12px rgba(0,0,0,0.9));" alt="Bugatti">
+                </div>
+                <div style="font-size:0.68rem; font-weight:800; color:#94a3b8; border-top:1px solid rgba(255,255,255,0.06); padding-top:6px; display:flex; justify-content:space-between;">
+                    <span>SHOWCASE VEHICLE</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="inspect-achieve-panel">
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.65rem; font-weight:900; color:#94a3b8;">
+                        <span>RECENT ACHIEVEMENTS</span>
+                        <span style="color:#64748b;">VIEW ALL</span>
+                    </div>
+                    <div class="inspect-achieve-row">
+                        <div class="inspect-badge-unit">
+                            <div class="inspect-badge-circle" style="color:#c084fc; border-color:#c084fc;"><i class="fas fa-tachometer-alt"></i></div>
+                            <span style="font-size:0.58rem; font-weight:800;">SPEED DEMON</span>
+                            <span style="font-size:0.5rem; color:#64748b;">Reach 300 KM/H</span>
+                        </div>
+                        <div class="inspect-badge-unit">
+                            <div class="inspect-badge-circle" style="color:#38bdf8; border-color:#38bdf8;"><i class="fas fa-shield-alt"></i></div>
+                            <span style="font-size:0.58rem; font-weight:800;">CLEAN RUN</span>
+                            <span style="font-size:0.5rem; color:#64748b;">No damage race</span>
+                        </div>
+                        <div class="inspect-badge-unit">
+                            <div class="inspect-badge-circle" style="color:#eab308; border-color:#eab308;"><i class="fas fa-crown"></i></div>
+                            <span style="font-size:0.58rem; font-weight:800;">DRIFT KING</span>
+                            <span style="font-size:0.5rem; color:#64748b;">Score 25,000 pts</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:6px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.65rem; font-weight:900; color:#94a3b8; margin-bottom:4px;">
+                        <span>BADGES</span>
+                        <span style="color:#64748b;">VIEW ALL</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; color:#94a3b8; font-size:0.8rem;">
+                        <i class="fas fa-star" style="color:#eab308;"></i>
+                        <i class="fas fa-flag"></i>
+                        <i class="fas fa-skull"></i>
+                        <i class="fas fa-fire" style="color:#ef4444;"></i>
+                        <i class="fas fa-bolt" style="color:#38bdf8;"></i>
+                        <i class="fas fa-trophy" style="color:#a855f7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. MAIN CONTAINER -->
 <div class="main-container" id="mainContainer">
     <canvas id="unity-canvas"></canvas>
 
+    <!-- IN-GAME HUD TOAST NOTIFICATION CONTAINER (ADDED FIXED) -->
+    <div id="gameNotificationHUD">
+        <i class="fas fa-bell hud-notify-icon" id="hudNotifyIcon"></i>
+        <span class="hud-notify-msg" id="hudNotifyText">NOTIFICATION</span>
+    </div>
+
     <!-- CINEMATIC ASYNC LOADING OVERLAY -->
-    <div id="gameLoadingScreen">
+    <div id="gameLoadingScreen" style="display: none;">
         <div class="loader-top-header">
             <div class="loader-logo-title">CAR <span>CLASH</span></div>
             <div class="loader-track-badge" id="loaderTrackName">TRACK: CYBER HIGHWAY</div>
@@ -1001,7 +1331,6 @@ body, html {
         
         <!-- TOP HEADER -->
         <header class="top-header">
-            <!-- Left: Dynamic Level Badge & User Info -->
             <div class="user-profile-badge" onclick="goToProfile()" title="View Profile">
                 <div class="level-shield" id="headerLevelDisplay">{{ level or 1 }}</div>
                 <div class="user-meta-info">
@@ -1015,7 +1344,6 @@ body, html {
                 </div>
             </div>
 
-            <!-- Right: Currency Bar + Quick Action Icons -->
             <div class="top-right-bar">
                 <div class="currency-pill">
                     <i class="fas fa-dollar-sign curr-icon cash-icon"></i>
@@ -1030,16 +1358,19 @@ body, html {
                     <span>10/10 <b class="fuel-plus">+</b></span>
                 </div>
                 <div class="top-divider"></div>
-                <button class="header-action-btn" onclick="showComingSoon()" title="Friends"><i class="fas fa-user-friends"></i></button>
-                <button class="header-action-btn" onclick="showComingSoon()" title="Mail"><i class="fas fa-envelope"></i></button>
+                <button class="header-action-btn" onclick="openFriendsDrawer('friends')" title="Friends & Community">
+                    <i class="fas fa-user-friends"></i>
+                </button>
+                <button class="header-action-btn" onclick="openFriendsDrawer('requests')" title="Mail & Requests">
+                    <i class="fas fa-envelope"></i>
+                    <span class="mail-badge-count" id="mailBadge">0</span>
+                </button>
                 <button class="header-action-btn" onclick="openSettings()" title="Settings"><i class="fas fa-cog"></i></button>
             </div>
         </header>
 
         <!-- MIDDLE CONTENT AREA -->
         <div class="middle-workspace">
-            
-            <!-- Left Navigation Menu Cards -->
             <div class="left-menu-column">
                 <div class="menu-card menu-card-career" onclick="playGame()">
                     <div class="menu-card-left">
@@ -1049,7 +1380,7 @@ body, html {
                     <i class="fas fa-flag-checkered menu-card-icon" style="color: #000;"></i>
                 </div>
 
-                <div class="menu-card" onclick="showComingSoon()">
+                <div class="menu-card" onclick="showGameToast('MULTIPLAYER COMING IN NEXT UPDATE!', 'info', 'fa-globe')">
                     <div class="menu-card-left">
                         <span class="menu-card-title">MULTIPLAYER</span>
                         <span class="menu-card-sub">COMPETE ONLINE</span>
@@ -1090,32 +1421,27 @@ body, html {
                 </div>
             </div>
 
-            <!-- Right Featured Season Card -->
             <div class="season-banner-card">
                 <div class="season-tag">SEASON 1 ▶</div>
                 <div class="season-title">STREET KINGS</div>
-                <button class="season-btn" onclick="showComingSoon()">VIEW REWARDS</button>
+                <button class="season-btn" onclick="showGameToast('SEASON 1 REWARDS UNLOCK AT LVL 5', 'info', 'fa-trophy')">VIEW REWARDS</button>
             </div>
-
         </div>
 
-        <!-- BOTTOM CONTROLS & PLAY BUTTON -->
+        <!-- BOTTOM FOOTER -->
         <footer class="bottom-footer">
-            
-            <!-- Left Social Links & Gift -->
             <div class="social-links-strip">
-                <button class="social-circle-btn" onclick="showComingSoon()"><i class="fab fa-discord"></i></button>
-                <button class="social-circle-btn" onclick="showComingSoon()"><i class="fab fa-instagram"></i></button>
-                <button class="social-circle-btn" onclick="showComingSoon()"><i class="fab fa-twitter"></i></button>
-                <button class="social-circle-btn" onclick="showComingSoon()">
+                <button class="social-circle-btn" onclick="showGameToast('DISCORD SERVER: DISCORD.GG/CARCLASH', 'info', 'fa-discord')"><i class="fab fa-discord"></i></button>
+                <button class="social-circle-btn" onclick="showGameToast('FOLLOW US @CARCLASHGAME', 'info', 'fa-instagram')"><i class="fab fa-instagram"></i></button>
+                <button class="social-circle-btn" onclick="showGameToast('FOLLOW US ON TWITTER/X', 'info', 'fa-twitter')"><i class="fab fa-twitter"></i></button>
+                <button class="social-circle-btn" onclick="showGameToast('DAILY GIFT CLAIMED!', 'success', 'fa-gift')">
                     <i class="fas fa-gift"></i>
                     <span class="gift-badge">1</span>
                 </button>
             </div>
 
-            <!-- Right Bottom Action Buttons -->
             <div class="bottom-play-group">
-                <div class="quick-race-btn" onclick="playGame()">
+                <div class="quick-race-btn" id="quickRaceBtn" onclick="playGame()">
                     <span class="quick-race-title">QUICK RACE <i class="fas fa-random" style="font-size:0.8rem;"></i></span>
                     <span class="quick-race-sub">RANDOM MODE</span>
                 </div>
@@ -1124,9 +1450,7 @@ body, html {
                     PLAY <i class="fas fa-angle-double-right"></i>
                 </button>
             </div>
-
         </footer>
-
     </div>
 
     <!-- SHARED CAR DISPLAY -->
@@ -1137,107 +1461,249 @@ body, html {
         <button class="arrow-btn" id="rightArrow" onclick="nextCar()"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- CAR SELECTION INSPECT MODE HUD -->
-    <div id="carCustomViewHUD">
-        <div class="car-inspect-header hud-interactive">
-            <div class="car-inspect-title" id="inspectCarName">BUGATTI CHIRON <span>[CLASS-S]</span></div>
-            <div style="font-family:'Rajdhani'; font-size:1.2rem; color:#ffffff; font-weight:bold;">SELECTED MAP: <span id="currentSelectedMapLabel" style="color:#ffd000;">CYBER HIGHWAY</span></div>
-        </div>
+    <!-- CAR SELECTION / GARAGE HUD -->
+    <div id="carCustomViewHUD" style="display: none;">
+        <div class="car-select-top-bar hud-interactive">
+            <div class="car-select-back-title" onclick="exitCarSelectionMode()" title="Back to Main Menu">
+                <i class="fas fa-chevron-left"></i>
+                <span>CAR SELECTION</span>
+            </div>
 
-        <!-- Left Specs Panel -->
-        <div class="car-specs-panel hud-interactive">
-            <div class="spec-item">
-                <div class="spec-labels"><span>ENGINE / DRIVE</span><span id="specEngine" style="color:#ffffff;">8.0L W16 QUAD-TURBO</span></div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-labels"><span>TOP SPEED</span><span id="specSpeed">420 KM/H</span></div>
-                <div class="spec-bar-track"><div class="spec-bar-fill" id="barSpeed" style="width: 95%;"></div></div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-labels"><span>ACCELERATION (0-100)</span><span id="specAccel">2.4 SEC</span></div>
-                <div class="spec-bar-track"><div class="spec-bar-fill" id="barAccel" style="width: 92%;"></div></div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-labels"><span>HANDLING & DRIFT</span><span id="specHandling">88%</span></div>
-                <div class="spec-bar-track"><div class="spec-bar-fill" id="barHandling" style="width: 88%;"></div></div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-labels"><span>NITRO BOOST</span><span id="specNitro">90%</span></div>
-                <div class="spec-bar-track"><div class="spec-bar-fill" id="barNitro" style="width: 90%;"></div></div>
-            </div>
-        </div>
-
-        <!-- Bottom Actions -->
-        <div class="inspect-action-footer hud-interactive">
-            <button class="inspect-btn btn-equip" id="equipCarBtn" onclick="confirmEquipCar()">SELECT CAR</button>
-            <button class="inspect-btn btn-back" onclick="exitCarSelectionMode()">BACK</button>
-        </div>
-    </div>
-
-    <!-- MAP SELECTION MODE HUD -->
-    <div id="mapSelectionHUD">
-        <div class="map-inspect-header">
-            <div style="font-family:'Orbitron'; font-size:2rem; color:#ffd000; letter-spacing:2px;">CHOOSE TRACK / ARENA</div>
-            <button class="inspect-btn btn-back" onclick="exitMapSelectionMode()">CLOSE ✕</button>
-        </div>
-
-        <!-- Center Map Preview Card & Arrows -->
-        <div class="map-display-wrapper">
-            <button class="map-arrow-btn map-arrow-left" onclick="prevMap()"><i class="fas fa-chevron-left"></i></button>
-            
-            <div class="map-card-box">
-                <div class="map-icon-cover" id="mapCoverIcon">
-                    <i class="fas fa-city"></i>
+            <div class="car-select-currencies">
+                <div class="lvl-badge-pill">
+                    <span>LVL {{ level or 1 }}</span>
+                    <i class="fas fa-crown" style="color:#ffd000;"></i>
                 </div>
-                <div class="map-details">
-                    <div class="map-name-label" id="mapTitleLabel">CYBER HIGHWAY</div>
-                    <div class="map-stats-text" id="mapStatsLabel">Length: 4.8 km • Difficulty: MEDIUM</div>
+                <div class="currency-pill">
+                    <i class="fas fa-dollar-sign curr-icon cash-icon"></i>
+                    <span>0</span>
                 </div>
-                <div class="map-lock-overlay" id="mapLockOverlay">LOCKED 🔒</div>
+                <div class="currency-pill">
+                    <i class="fas fa-gem curr-icon diamond-icon"></i>
+                    <span>0</span>
+                </div>
+                <div class="currency-pill">
+                    <i class="fas fa-bolt curr-icon fuel-icon"></i>
+                    <span>120/120 <b class="fuel-plus">+</b></span>
+                </div>
+                <button class="header-action-btn" onclick="openSettings()" title="Settings"><i class="fas fa-cog"></i></button>
+            </div>
+        </div>
+
+        <div class="car-specs-cluster hud-interactive">
+            <div>
+                <div class="car-brand-sub" id="inspectCarBrand">BUGATTI</div>
+                <div class="car-model-title" id="inspectCarName">CHIRON</div>
+                <div class="car-rank-row">
+                    <span class="rank-badge-square" id="inspectRankLetter">S</span>
+                    <span class="rank-num-text" id="inspectRankScore">889</span>
+                </div>
             </div>
 
-            <button class="map-arrow-btn map-arrow-right" onclick="nextMap()"><i class="fas fa-chevron-right"></i></button>
+            <div class="specs-bars-box">
+                <div class="spec-row">
+                    <span class="spec-name-label"><i class="fas fa-tachometer-alt"></i> TOP SPEED</span>
+                    <div class="spec-track"><div class="spec-fill" id="barSpeed" style="width: 95%;"></div></div>
+                    <span class="spec-value-text" id="specSpeed">420 KM/H</span>
+                </div>
+                <div class="spec-row">
+                    <span class="spec-name-label"><i class="fas fa-bolt"></i> ACCELERATION</span>
+                    <div class="spec-track"><div class="spec-fill" id="barAccel" style="width: 92%;"></div></div>
+                    <span class="spec-value-text" id="specAccel">2.4 S</span>
+                </div>
+                <div class="spec-row">
+                    <span class="spec-name-label"><i class="fas fa-compass"></i> HANDLING</span>
+                    <div class="spec-track"><div class="spec-fill" id="barHandling" style="width: 88%;"></div></div>
+                    <span class="spec-value-text" id="specHandling">8.8</span>
+                </div>
+                <div class="spec-row">
+                    <span class="spec-name-label"><i class="fas fa-circle-notch"></i> BRAKING</span>
+                    <div class="spec-track"><div class="spec-fill" id="barBraking" style="width: 90%;"></div></div>
+                    <span class="spec-value-text" id="specBraking">9.0</span>
+                </div>
+                <div class="spec-row">
+                    <span class="spec-name-label"><i class="fas fa-fire"></i> NITRO</span>
+                    <div class="spec-track"><div class="spec-fill" id="barNitro" style="width: 92%;"></div></div>
+                    <span class="spec-value-text" id="specNitro">9.2</span>
+                </div>
+            </div>
         </div>
 
-        <div style="text-align:center;">
-            <button class="inspect-btn btn-equip" id="equipMapBtn" onclick="confirmSelectMap()">SELECT MAP</button>
+        <div class="car-select-bottom-deck hud-interactive">
+            <div class="top-deck-controls-bar">
+                <div class="deck-filter-btns">
+                    <div class="deck-action-pill" onclick="showGameToast('SORTING BY PERFORMANCE RANK', 'info', 'fa-sort')">
+                        <i class="fas fa-sliders-h"></i> SORT
+                    </div>
+                    <div class="deck-action-pill" onclick="showGameToast('FILTER: ALL OWNED VEHICLES', 'info', 'fa-filter')">
+                        <i class="fas fa-filter"></i> FILTER
+                    </div>
+                </div>
+
+                <button class="golden-select-car-btn" id="equipCarBtn" onclick="confirmEquipCar()">
+                    <i class="fas fa-check-circle"></i> SELECT CAR
+                </button>
+            </div>
+
+            <div class="car-cards-strip-row" id="carCardsDeck"></div>
         </div>
     </div>
-
-    <!-- Match Starting Countdown Overlay -->
-    <div id="matchText">
-        <span>STARTING IN: <b id="matchTimer" style="color:#ffd000;">5</b>s</span>
-        <button onclick="cancelMatch()" style="background:transparent; border:2px solid #ffd000; color:#ffd000; padding:6px 14px; cursor:pointer; font-weight:900;">CANCEL</button>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-menu">
-        <h3>SETTINGS</h3>
-        <label>Music <input type="checkbox" checked></label>
-        <label>Sound FX <input type="checkbox" checked></label>
-        <label>Graphics
-            <select>
-                <option>Low</option>
-                <option>Medium</option>
-                <option selected>High</option>
-            </select>
-        </label>
-        <label>Controls
-            <select>
-                <option>Keyboard</option>
-                <option>Touch</option>
-            </select>
-        </label>
-        <a href="/privacy_policy" class="modal-btn" style="background:#222; color:#fff;">Privacy Policy</a>
-        <a href="/logout" class="modal-btn logout-btn">Logout</a>
-        <button class="modal-btn close-btn" onclick="closeSettings()">Close</button>
-    </div>
-
-    <div id="comingSoonPopup">FEATURE COMING SOON!</div>
 </div>
 
+<!-- RIGHT-SIDE SLIDING FRIENDS DRAWER -->
+<div class="friends-drawer-backdrop" id="drawerBackdrop" onclick="closeFriendsDrawer()"></div>
+
+<div class="friends-drawer-panel" id="friendsDrawer">
+    <div class="drawer-header-strip">
+        <div class="drawer-title-box">
+            <i class="fas fa-shield-alt"></i>
+            <h2>RACERS HUB</h2>
+        </div>
+        <button class="drawer-close-btn" onclick="closeFriendsDrawer()">✕</button>
+    </div>
+
+    <div class="drawer-tabs-row">
+        <div class="drawer-tab active" id="tabFriendsBtn" onclick="switchDrawerTab('friends')">
+            <i class="fas fa-user-friends"></i> FRIENDS
+        </div>
+        <div class="drawer-tab" id="tabAddBtn" onclick="switchDrawerTab('add')">
+            <i class="fas fa-search"></i> ADD DRIVER
+        </div>
+        <div class="drawer-tab" id="tabRequestsBtn" onclick="switchDrawerTab('requests')">
+            <i class="fas fa-inbox"></i> INBOX <span class="tab-badge" id="inboxTabBadge" style="display:none;">0</span>
+        </div>
+    </div>
+
+    <div class="drawer-body-container">
+        <div id="drawerFriendsListSection" style="display: flex; flex-direction: column; gap: 10px;">
+            <div id="friendsListContainer"></div>
+        </div>
+
+        <div id="drawerAddDriverSection" style="display: none; flex-direction: column; gap: 14px;">
+            <div class="drawer-search-box">
+                <input type="text" id="drawerSearchPlayerInput" class="drawer-search-input" placeholder="Enter 10-Digit Player ID..." maxlength="20" autocomplete="off">
+                <button class="drawer-search-btn" onclick="executeDriverSearchDrawer()"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="drawerSearchLoading" style="display:none; text-align:center; color:#ffd000; font-weight:bold; padding: 10px;">
+                <i class="fas fa-spinner fa-spin"></i> Searching Driver in Database...
+            </div>
+            <div class="searched-result-box" id="drawerSearchResultCard">
+                <div class="friend-card-left">
+                    <div class="friend-avatar-wrap"><div class="friend-avatar" id="drawerResultAvatar">R</div></div>
+                    <div class="friend-meta-data">
+                        <div class="friend-name-row">
+                            <span class="friend-username" id="drawerResultUsername">RACER</span>
+                            <span class="friend-lvl-badge" id="drawerResultLvl">LVL 1</span>
+                        </div>
+                        <span class="friend-sub-status" id="drawerResultId">ID: 0000000000</span>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); background: rgba(0,0,0,0.5); padding:8px; border-radius:6px; text-align:center;">
+                    <div><span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">SCORE</span><b id="dScore" style="display:block; color:#ffd000; font-family:'Rajdhani'; font-size:1.1rem;">0</b></div>
+                    <div><span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">RACES</span><b id="dRaces" style="display:block; color:#ffd000; font-family:'Rajdhani'; font-size:1.1rem;">0</b></div>
+                    <div><span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">WINS</span><b id="dWins" style="display:block; color:#22c55e; font-family:'Rajdhani'; font-size:1.1rem;">0</b></div>
+                </div>
+                <button class="invite-race-btn" id="drawerSendRequestBtn" onclick="sendFriendRequestDrawer()" style="padding:10px; font-size:0.9rem;">
+                    <i class="fas fa-user-plus"></i> SEND FRIEND REQUEST
+                </button>
+            </div>
+        </div>
+
+        <div id="drawerRequestsSection" style="display: none; flex-direction: column; gap: 10px;">
+            <div id="drawerRequestsListContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MAP SELECTION MODE HUD -->
+<div id="mapSelectionHUD" style="display: none;">
+    <div class="map-inspect-header">
+        <div style="font-family:'Orbitron'; font-size:2rem; color:#ffd000; letter-spacing:2px;">CHOOSE TRACK / ARENA</div>
+        <button class="inspect-btn btn-back" onclick="exitMapSelectionMode()">CLOSE ✕</button>
+    </div>
+
+    <div class="map-display-wrapper">
+        <button class="map-arrow-btn map-arrow-left" onclick="prevMap()"><i class="fas fa-chevron-left"></i></button>
+        <div class="map-card-box">
+            <div class="map-icon-cover" id="mapCoverIcon"><i class="fas fa-city"></i></div>
+            <div class="map-details">
+                <div class="map-name-label" id="mapTitleLabel">CYBER HIGHWAY</div>
+                <div class="map-stats-text" id="mapStatsLabel">Length: 4.8 km • Difficulty: MEDIUM</div>
+            </div>
+            <div class="map-lock-overlay" id="mapLockOverlay">LOCKED 🔒</div>
+        </div>
+        <button class="map-arrow-btn map-arrow-right" onclick="nextMap()"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div style="text-align:center;">
+        <button class="inspect-btn btn-equip" id="equipMapBtn" onclick="confirmSelectMap()">SELECT MAP</button>
+    </div>
+</div>
+
+<!-- MATCH COUNTDOWN OVERLAY -->
+<div id="matchText" style="display: none;">
+    <span>STARTING IN: <b id="matchTimer" style="color:#ffd000;">5</b>s</span>
+    <button onclick="cancelMatch()" style="background:transparent; border:2px solid #ffd000; color:#ffd000; padding:6px 14px; cursor:pointer; font-weight:900;">CANCEL</button>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settings-menu" style="display: none;">
+    <h3>SETTINGS</h3>
+    <label>Music <input type="checkbox" checked></label>
+    <label>Sound FX <input type="checkbox" checked></label>
+    <label>Graphics
+        <select>
+            <option>Low</option>
+            <option>Medium</option>
+            <option selected>High</option>
+        </select>
+    </label>
+    <label>Controls
+        <select>
+            <option>Keyboard</option>
+            <option>Touch</option>
+        </select>
+    </label>
+    <a href="/privacy_policy" class="modal-btn" style="background:#222; color:#fff;">Privacy Policy</a>
+    <a href="/logout" class="modal-btn logout-btn">Logout</a>
+    <button class="modal-btn close-btn" onclick="closeSettings()">Close</button>
+</div>
+
+<!-- KEYBOARD EVENT BYPASS INTERCEPTOR -->
 <script>
-  // Instant Render on DOM Load
+window.isDrawerInputFocused = false;
+
+['keydown', 'keypress', 'keyup'].forEach(eventType => {
+    window.addEventListener(eventType, function(event) {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (window.isDrawerInputFocused || activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+            event.stopImmediatePropagation();
+        }
+    }, true);
+});
+</script>
+
+<script>
+  let notifyTimeout = null;
+  function showGameToast(msg, type = 'info', iconClass = 'fa-bell') {
+      const hud = document.getElementById("gameNotificationHUD");
+      const icon = document.getElementById("hudNotifyIcon");
+      const text = document.getElementById("hudNotifyText");
+      if (!hud || !icon || !text) return;
+
+      hud.className = '';
+      if (type === 'success') hud.classList.add('hud-success');
+      else if (type === 'error') hud.classList.add('hud-error');
+
+      icon.className = `fas ${iconClass} hud-notify-icon`;
+      text.innerText = msg;
+
+      hud.classList.add("show");
+
+      if (notifyTimeout) clearTimeout(notifyTimeout);
+      notifyTimeout = setTimeout(() => { hud.classList.remove("show"); }, 2600);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
       const currentXp = parseFloat(document.body.getAttribute('data-currentxp')) || 0;
       const maxXp = parseFloat(document.body.getAttribute('data-maxxp')) || 1000;
@@ -1254,328 +1720,659 @@ body, html {
       if (currentXpText) currentXpText.innerText = currentXp;
       if (maxXpText) maxXpText.innerText = maxXp;
       if (levelDisplay) levelDisplay.innerText = level;
+
+      checkIncomingMails();
+
+      const inp = document.getElementById("drawerSearchPlayerInput");
+      if (inp) {
+          inp.addEventListener("focus", () => { window.isDrawerInputFocused = true; });
+          inp.addEventListener("blur", () => { window.isDrawerInputFocused = false; });
+          inp.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") {
+                  e.preventDefault();
+                  executeDriverSearchDrawer();
+              }
+          });
+      }
+      renderCarSelectorDeck();
   });
 
-  // 1. Intercept Fetch API
-  const defaultFetch = window.fetch;
-  window.fetch = function(resource, init) {
-    if (typeof resource === 'string' && resource.includes('save_race_result')) {
-      resource = '/save_race_result';
-    } else if (resource instanceof Request && resource.url.includes('save_race_result')) {
-      resource = new Request('/save_race_result', resource);
-    }
-    return defaultFetch.call(this, resource, init);
+  function checkIncomingMails() {
+      fetch('/get_mail_requests')
+      .then(res => res.json())
+      .then(data => {
+          if (data && data.success) {
+              const badge = document.getElementById("mailBadge");
+              const inboxBadge = document.getElementById("inboxTabBadge");
+              if (data.count > 0) {
+                  badge.innerText = data.count;
+                  badge.style.display = "flex";
+                  inboxBadge.innerText = data.count;
+                  inboxBadge.style.display = "inline-block";
+              } else {
+                  badge.style.display = "none";
+                  inboxBadge.style.display = "none";
+              }
+          }
+      }).catch(() => {});
+  }
+
+  let searchedPlayerId = null;
+
+  function openFriendsDrawer(defaultTab = 'friends') {
+      document.getElementById("drawerBackdrop").style.display = "block";
+      document.getElementById("friendsDrawer").classList.add("open");
+      switchDrawerTab(defaultTab);
+  }
+
+  function closeFriendsDrawer() {
+      document.getElementById("drawerBackdrop").style.display = "none";
+      document.getElementById("friendsDrawer").classList.remove("open");
+      window.isDrawerInputFocused = false;
+  }
+
+  function switchDrawerTab(tab) {
+      const friendsSec = document.getElementById("drawerFriendsListSection");
+      const addSec = document.getElementById("drawerAddDriverSection");
+      const reqSec = document.getElementById("drawerRequestsSection");
+
+      const tFriends = document.getElementById("tabFriendsBtn");
+      const tAdd = document.getElementById("tabAddBtn");
+      const tReq = document.getElementById("tabRequestsBtn");
+
+      [tFriends, tAdd, tReq].forEach(el => el.classList.remove("active"));
+      friendsSec.style.display = "none";
+      addSec.style.display = "none";
+      reqSec.style.display = "none";
+
+      if (tab === 'friends') {
+          tFriends.classList.add("active");
+          friendsSec.style.display = "flex";
+          window.isDrawerInputFocused = false;
+          loadFriendsListDrawer();
+      } else if (tab === 'add') {
+          tAdd.classList.add("active");
+          addSec.style.display = "flex";
+          setTimeout(() => {
+              const inp = document.getElementById("drawerSearchPlayerInput");
+              if (inp) {
+                  inp.focus();
+                  window.isDrawerInputFocused = true;
+              }
+          }, 100);
+      } else if (tab === 'requests') {
+          tReq.classList.add("active");
+          reqSec.style.display = "flex";
+          window.isDrawerInputFocused = false;
+          loadMailboxRequestsDrawer();
+      }
+  }
+
+  function loadFriendsListDrawer() {
+      const container = document.getElementById("friendsListContainer");
+      container.innerHTML = '<div style="text-align:center; color:#ffd000; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Synchronizing Drivers...</div>';
+
+      fetch('/get_friends')
+      .then(res => res.json())
+      .then(data => {
+          let friends = (data && data.success && data.friends) ? data.friends : [];
+          if (friends.length === 0) {
+              container.innerHTML = `
+                <div style="text-align:center; padding:35px 20px; color:#64748b;">
+                    <i class="fas fa-user-plus" style="font-size:2.5rem; margin-bottom:12px; color:#334155;"></i>
+                    <div style="font-weight:800; font-size:1rem; color:#94a3b8; margin-bottom:4px;">NO DRIVERS ADDED YET</div>
+                    <div style="font-size:0.75rem;">Switch to <b>ADD DRIVER</b> tab to find racers by ID!</div>
+                </div>`;
+              return;
+          }
+
+          let html = '';
+          friends.forEach((f, idx) => {
+              const isOnline = idx % 2 === 0;
+              const safePid = String(f.player_id).trim();
+              const safeName = String(f.username).replace(/'/g, "\\'");
+              
+              html += `
+              <div class="friend-pro-card">
+                  <div class="friend-card-left">
+                      <div class="friend-avatar-wrap">
+                          <div class="friend-avatar">${f.username.charAt(0).toUpperCase()}</div>
+                          <div class="status-indicator-dot ${isOnline ? 'status-online' : 'status-offline'}"></div>
+                      </div>
+                      <div class="friend-meta-data">
+                          <div class="friend-name-row">
+                              <span class="friend-username">${f.username}</span>
+                              <span class="friend-lvl-badge">LVL ${f.level}</span>
+                          </div>
+                          <span class="friend-sub-status">
+                              <i class="fas ${isOnline ? 'fa-gamepad' : 'fa-clock'}" style="color:${isOnline ? '#22c55e' : '#64748b'};"></i> 
+                              ${isOnline ? 'IN LOBBY' : 'OFFLINE'}
+                          </span>
+                      </div>
+                  </div>
+                  <div class="friend-card-right">
+                      <button type="button" class="invite-race-btn" onclick="inviteFriendToRace('${safeName}')">INVITE</button>
+                      <button type="button" class="action-icon-btn" onclick="inspectFriendProfile('${safePid}')" title="Inspect Full Profile"><i class="fas fa-id-card"></i></button>
+                  </div>
+              </div>`;
+          });
+          container.innerHTML = html;
+      }).catch(() => {
+          container.innerHTML = '<div style="text-align:center; color:#ef4444; padding:20px;">Failed to load friends list.</div>';
+      });
+  }
+
+  function inviteFriendToRace(name) {
+      showGameToast(`INVITATION DISPATCHED TO ${name.toUpperCase()}!`, 'success', 'fa-paper-plane');
+  }
+
+  function inspectFriendProfile(pid) {
+      if (!pid) return;
+      showGameToast("FETCHING DRIVER TELEMETRY...", "info", "fa-satellite-dish");
+
+      fetch(`/search_driver?player_id=${encodeURIComponent(pid)}`)
+      .then(res => res.json())
+      .then(data => {
+          if (data && data.success && data.driver) {
+              const d = data.driver;
+              document.getElementById("inspectAvatarLetter").innerText = d.username.charAt(0).toUpperCase();
+              document.getElementById("inspectUsernameText").innerText = d.username;
+              document.getElementById("inspectLevelTag").innerText = d.level;
+              document.getElementById("inspectXpText").innerText = `${d.current_xp || 0} / 1000 XP`;
+              
+              const xpPercent = Math.min(((d.current_xp || 0) / 1000) * 100, 100);
+              document.getElementById("inspectXpFillBar").style.width = xpPercent + "%";
+              document.getElementById("inspectPlayerIdText").innerText = d.player_id;
+
+              document.getElementById("inspectStatWins").innerText = d.races_won || 0;
+              document.getElementById("inspectStatRaces").innerText = d.races_played || 0;
+              document.getElementById("inspectStatScore").innerText = d.total_score || 0;
+
+              document.getElementById("inspectPlayerProfileModal").style.display = "flex";
+          } else {
+              showGameToast("COULD NOT LOAD DRIVER PROFILE", "error", "fa-exclamation-triangle");
+          }
+      })
+      .catch(() => {
+          showGameToast("NETWORK ERROR", "error", "fa-wifi");
+      });
+  }
+
+  function closeInspectProfileModal() {
+      document.getElementById("inspectPlayerProfileModal").style.display = "none";
+  }
+
+  function executeDriverSearchDrawer() {
+      const inputEl = document.getElementById("drawerSearchPlayerInput");
+      const pid = inputEl.value.trim();
+      if (!pid) {
+          showGameToast("ENTER A 10-DIGIT PLAYER ID!", "error", "fa-exclamation-triangle");
+          return;
+      }
+
+      document.getElementById("drawerSearchLoading").style.display = "block";
+      document.getElementById("drawerSearchResultCard").style.display = "none";
+
+      fetch(`/search_driver?player_id=${encodeURIComponent(pid)}`)
+      .then(res => res.json())
+      .then(data => {
+          document.getElementById("drawerSearchLoading").style.display = "none";
+          if (data && data.success) {
+              const d = data.driver;
+              searchedPlayerId = d.player_id;
+
+              document.getElementById("drawerResultAvatar").innerText = d.username.charAt(0).toUpperCase();
+              document.getElementById("drawerResultUsername").innerText = d.username;
+              document.getElementById("drawerResultLvl").innerText = `LVL ${d.level}`;
+              document.getElementById("drawerResultId").innerText = `ID: ${d.player_id}`;
+              document.getElementById("dScore").innerText = d.total_score;
+              document.getElementById("dRaces").innerText = d.races_played;
+              document.getElementById("dWins").innerText = d.races_won;
+
+              const reqBtn = document.getElementById("drawerSendRequestBtn");
+              if (d.relation === 'self') {
+                  reqBtn.innerText = "YOUR OWN PROFILE";
+                  reqBtn.disabled = true;
+              } else if (d.relation === 'friends') {
+                  reqBtn.innerText = "ALREADY FRIENDS ✓";
+                  reqBtn.disabled = true;
+              } else if (d.relation === 'request_sent') {
+                  reqBtn.innerText = "REQUEST SENT ⏳";
+                  reqBtn.disabled = true;
+              } else if (d.relation === 'request_received') {
+                  reqBtn.innerText = "CHECK INBOX ✉";
+                  reqBtn.disabled = true;
+              } else {
+                  reqBtn.innerHTML = '<i class="fas fa-user-plus"></i> SEND FRIEND REQUEST';
+                  reqBtn.disabled = false;
+              }
+
+              document.getElementById("drawerSearchResultCard").style.display = "flex";
+              showGameToast("RACER PROFILE FOUND!", "success", "fa-check-circle");
+          } else {
+              showGameToast(data.message || "NO RACER FOUND WITH THIS ID!", "error", "fa-times-circle");
+          }
+      })
+      .catch(() => {
+          document.getElementById("drawerSearchLoading").style.display = "none";
+          showGameToast("SERVER CONNECTION ERROR!", "error", "fa-wifi");
+      });
+  }
+
+  function sendFriendRequestDrawer() {
+      if (!searchedPlayerId) return;
+      const reqBtn = document.getElementById("drawerSendRequestBtn");
+      reqBtn.disabled = true;
+      reqBtn.innerText = "SENDING...";
+
+      fetch('/send_friend_request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ player_id: searchedPlayerId })
+      })
+      .then(res => res.json())
+      .then(data => {
+          if (data && data.success) {
+              showGameToast("FRIEND REQUEST SENT SUCCESSFULLY!", "success", "fa-user-check");
+              reqBtn.innerText = "REQUEST SENT ⏳";
+          } else {
+              showGameToast(data.message || "FAILED TO SEND REQUEST.", "error", "fa-exclamation-circle");
+              reqBtn.disabled = false;
+              reqBtn.innerHTML = '<i class="fas fa-user-plus"></i> SEND FRIEND REQUEST';
+          }
+      }).catch(() => {
+          showGameToast("NETWORK ERROR.", "error", "fa-wifi");
+          reqBtn.disabled = false;
+      });
+  }
+
+  function loadMailboxRequestsDrawer() {
+      const container = document.getElementById("drawerRequestsListContainer");
+      container.innerHTML = '<div style="text-align:center; color:#ffd000; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Checking inbox...</div>';
+
+      fetch('/get_mail_requests')
+      .then(res => res.json())
+      .then(data => {
+          if (data && data.success && data.requests.length > 0) {
+              let html = '';
+              data.requests.forEach(r => {
+                  html += `
+                  <div class="friend-pro-card" id="req-card-${r.request_id}">
+                      <div class="friend-card-left">
+                          <div class="friend-avatar-wrap">
+                              <div class="friend-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">${r.username.charAt(0).toUpperCase()}</div>
+                          </div>
+                          <div class="friend-meta-data">
+                              <div class="friend-name-row">
+                                  <span class="friend-username">${r.username}</span>
+                                  <span class="friend-lvl-badge">LVL ${r.level}</span>
+                              </div>
+                              <span class="friend-sub-status">ID: ${r.player_id}</span>
+                          </div>
+                      </div>
+                      <div class="friend-card-right">
+                          <button type="button" class="invite-race-btn" style="background:#22c55e;" onclick="respondToRequestDrawer(${r.request_id}, 'accept')"><i class="fas fa-check"></i></button>
+                          <button type="button" class="invite-race-btn" style="background:#ef4444;" onclick="respondToRequestDrawer(${r.request_id}, 'reject')"><i class="fas fa-times"></i></button>
+                      </div>
+                  </div>`;
+              });
+              container.innerHTML = html;
+          } else {
+              container.innerHTML = `
+                <div style="text-align:center; padding:35px 20px; color:#64748b;">
+                    <i class="fas fa-inbox" style="font-size:2.5rem; margin-bottom:12px; color:#334155;"></i>
+                    <div style="font-weight:800; font-size:1rem; color:#94a3b8;">NO PENDING REQUESTS</div>
+                </div>`;
+          }
+      });
+  }
+
+  function respondToRequestDrawer(reqId, action) {
+      fetch('/respond_request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ request_id: reqId, action: action })
+      })
+      .then(res => res.json())
+      .then(data => {
+          if (data && data.success) {
+              const el = document.getElementById(`req-card-${reqId}`);
+              if (el) el.remove();
+              checkIncomingMails();
+              showGameToast(action === 'accept' ? "FRIEND REQUEST ACCEPTED!" : "REQUEST DECLINED", action === 'accept' ? "success" : "info", action === 'accept' ? "fa-user-check" : "fa-user-times");
+          }
+      });
+  }
+
+  var globalUnityInstance = null;
+  var isUnityLoaded = false;
+  var unityLoadProgress = 0;
+  var countdown;
+  var timer = 5;
+
+  var buildUrl = "/static/BugattiBuild/Build";
+  var config = {
+      dataUrl: buildUrl + "/BugattiBuild.data",
+      frameworkUrl: buildUrl + "/BugattiBuild.framework.js",
+      codeUrl: buildUrl + "/BugattiBuild.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "Car_Clash",
+      productVersion: "1.0",
   };
 
-  // 2. Intercept XMLHttpRequest (Unity WebGL standard)
-  const defaultXHR = window.XMLHttpRequest.prototype.open;
-  window.XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-    if (typeof url === 'string' && url.includes('save_race_result')) {
-      url = '/save_race_result';
-    }
-    return defaultXHR.call(this, method, url, ...rest);
+  var script = document.createElement("script");
+  script.src = buildUrl + "/BugattiBuild.loader.js";
+  script.onload = () => {
+      createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+          unityLoadProgress = Math.round(progress * 100);
+          updateLoadingProgress(unityLoadProgress);
+      }).then((instance) => {
+          globalUnityInstance = instance;
+          isUnityLoaded = true;
+          updateLoadingProgress(100);
+          if (window.isWaitingForGameToStart) triggerGameLaunch();
+      }).catch((err) => {
+          console.warn("Unity load fallback:", err);
+      });
   };
-</script>
+  document.body.appendChild(script);
 
-<!-- Unity Script & Logic with Async Progress Integration -->
-<script>
-var globalUnityInstance = null;
-var isUnityLoaded = false;
-var unityLoadProgress = 0;
-var countdown;
-var timer = 5;
+  function updateLoadingProgress(val) {
+      const fill = document.getElementById("loaderProgressFill");
+      const text = document.getElementById("loaderPercentText");
+      const msg = document.getElementById("loaderStatusMsg");
+      if (fill) fill.style.width = val + "%";
+      if (text) text.innerText = val + "%";
+      if (val < 40) { if (msg) msg.innerText = "CONNECTING TO RACING SERVERS..."; }
+      else if (val < 80) { if (msg) msg.innerText = "STREAMING HIGH-RES TRACK ASSETS..."; }
+      else if (val < 100) { if (msg) msg.innerText = "INITIALIZING VEHICLE PHYSICS..."; }
+      else { if (msg) msg.innerText = "READY! STARTING RACE..."; }
+  }
 
-var buildUrl = "/static/BugattiBuild/Build";
-var config = {
-    dataUrl: buildUrl + "/BugattiBuild.data",
-    frameworkUrl: buildUrl + "/BugattiBuild.framework.js",
-    codeUrl: buildUrl + "/BugattiBuild.wasm",
-    streamingAssetsUrl: "StreamingAssets",
-    companyName: "DefaultCompany",
-    productName: "Car_Clash",
-    productVersion: "1.0",
-};
-
-// Unity Loader with Realtime Progress Listener
-var script = document.createElement("script");
-script.src = buildUrl + "/BugattiBuild.loader.js";
-script.onload = () => {
-    createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
-        unityLoadProgress = Math.round(progress * 100);
-        updateLoadingProgress(unityLoadProgress);
-    }).then((instance) => {
-        globalUnityInstance = instance;
-        isUnityLoaded = true;
-        updateLoadingProgress(100);
-        console.log("Unity Loaded Successfully");
-        
-        // Agar user already play click karke wait kar raha ho
-        if (window.isWaitingForGameToStart) {
-            triggerGameLaunch();
-        }
-    }).catch((err) => {
-        console.warn("Unity Load bypassed:", err);
-    });
-};
-document.body.appendChild(script);
-
-function updateLoadingProgress(val) {
-    const fill = document.getElementById("loaderProgressFill");
-    const text = document.getElementById("loaderPercentText");
-    const msg = document.getElementById("loaderStatusMsg");
-    
-    if (fill) fill.style.width = val + "%";
-    if (text) text.innerText = val + "%";
-    
-    if (val < 40) {
-        if (msg) msg.innerText = "CONNECTING TO AWS RACING CLOUD...";
-    } else if (val < 80) {
-        if (msg) msg.innerText = "STREAMING HIGH-RES TRACK ASSETS...";
-    } else if (val < 100) {
-        if (msg) msg.innerText = "INITIALIZING PHYSICS ENGINE...";
-    } else {
-        if (msg) msg.innerText = "ENGINE READY! STARTING RACE...";
+  let cars = [
+    { 
+        id: 0,
+        brand: "BUGATTI",
+        name: "CHIRON", 
+        rankClass: "S",
+        rankScore: 889,
+        speed: "420 KM/H", speedVal: 95, 
+        accel: "2.4 S", accelVal: 92, 
+        handling: "8.8", handlingVal: 88, 
+        braking: "9.0", brakingVal: 90,
+        nitro: "9.2", nitroVal: 92, 
+        img: "/static/image/n1.png", 
+        unlocked: true 
+    },
+    { 
+        id: 1,
+        brand: "PORSCHE",
+        name: "911 GT3 RS", 
+        rankClass: "S",
+        rankScore: 847,
+        speed: "340 KM/H", speedVal: 82, 
+        accel: "3.0 S", accelVal: 84, 
+        handling: "9.4", handlingVal: 94, 
+        braking: "9.2", brakingVal: 92,
+        nitro: "8.4", nitroVal: 84, 
+        img: "/static/image/car2.png", 
+        unlocked: false 
+    },
+    { 
+        id: 2,
+        brand: "MCLAREN",
+        name: "720S", 
+        rankClass: "S",
+        rankScore: 860,
+        speed: "341 KM/H", speedVal: 89, 
+        accel: "2.9 S", accelVal: 88, 
+        handling: "9.0", handlingVal: 90, 
+        braking: "8.9", brakingVal: 89,
+        nitro: "9.0", nitroVal: 90, 
+        img: "/static/image/car3.png", 
+        unlocked: false 
+    },
+    { 
+        id: 3,
+        brand: "LAMBORGHINI",
+        name: "AVENTADOR SVJ", 
+        rankClass: "S",
+        rankScore: 864,
+        speed: "350 KM/H", speedVal: 88, 
+        accel: "2.8 S", accelVal: 87, 
+        handling: "8.7", handlingVal: 87, 
+        braking: "8.9", brakingVal: 89,
+        nitro: "8.4", nitroVal: 84, 
+        img: "/static/image/car4.png", 
+        unlocked: false 
     }
-}
+  ];
 
-// CAR DATA & SPECS
-let cars = [
-  { img: "/static/image/n1.png", name: "BUGATTI CHIRON", class: "CLASS-S", engine: "8.0L W16 QUAD-TURBO", speed: "420 KM/H", speedVal: 95, accel: "2.4 SEC", accelVal: 92, handling: "88%", handlingVal: 88, nitro: "90%", nitroVal: 90, unlocked: true },
-  { img: "/static/image/car2.png", name: "PORSCHE 911 GT3", class: "CLASS-A", engine: "4.0L FLAT-6 TWIN-TURBO", speed: "340 KM/H", speedVal: 82, accel: "3.0 SEC", accelVal: 84, handling: "94%", handlingVal: 94, nitro: "80%", nitroVal: 80, unlocked: false },
-  { img: "/static/image/car3.png", name: "MCLAREN SPEEDTAIL", class: "CLASS-S+", engine: "4.0L V8 HYBRID", speed: "403 KM/H", speedVal: 93, accel: "2.6 SEC", accelVal: 89, handling: "90%", handlingVal: 90, nitro: "92%", nitroVal: 92, unlocked: false },
-  { img: "/static/image/car4.png", name: "LAMBORGHINI VENENO", class: "CLASS-S", engine: "6.5L NA V12", speed: "355 KM/H", speedVal: 86, accel: "2.8 SEC", accelVal: 87, handling: "86%", handlingVal: 86, nitro: "85%", nitroVal: 85, unlocked: false }
-];
+  let maps = [
+      { title: "CYBER HIGHWAY", icon: "fa-city", stats: "Length: 4.8 km • Difficulty: MEDIUM", unlocked: true },
+      { title: "NEON HARBOR", icon: "fa-water", stats: "Length: 6.2 km • Difficulty: HARD", unlocked: false },
+      { title: "DESERT CANYON", icon: "fa-mountain", stats: "Length: 3.5 km • Difficulty: EASY", unlocked: false }
+  ];
 
-// MAP DATA
-let maps = [
-    { title: "CYBER HIGHWAY", icon: "fa-city", stats: "Length: 4.8 km • Difficulty: MEDIUM", unlocked: true },
-    { title: "NEON HARBOR", icon: "fa-water", stats: "Length: 6.2 km • Difficulty: HARD", unlocked: false },
-    { title: "DESERT CANYON", icon: "fa-mountain", stats: "Length: 3.5 km • Difficulty: EASY", unlocked: false }
-];
+  let currentCar = 0;
+  let selectedEquippedCar = 0;
+  let currentMapIndex = 0;
+  let selectedMapName = "CYBER HIGHWAY";
 
-let currentCar = 0;
-let selectedEquippedCar = 0;
-let currentMapIndex = 0;
-let selectedMapName = "CYBER HIGHWAY";
+  function renderCarSelectorDeck() {
+      const deck = document.getElementById("carCardsDeck");
+      if (!deck) return;
+      deck.innerHTML = '';
 
-function updateCar() {
-    const car = cars[currentCar];
-    document.getElementById("carImage").src = car.img;
-    const lockOverlay = document.getElementById("lockOverlay");
-    const equipBtn = document.getElementById("equipCarBtn");
+      cars.forEach((car, index) => {
+          const isSelected = index === currentCar;
+          const card = document.createElement("div");
+          card.className = `mini-car-selector-card ${isSelected ? 'active-card' : ''}`;
+          card.onclick = () => {
+              currentCar = index;
+              updateCar();
+          };
 
-    document.getElementById("inspectCarName").innerHTML = `${car.name} <span>[${car.class}]</span>`;
-    document.getElementById("specEngine").innerText = car.engine;
-    document.getElementById("specSpeed").innerText = car.speed;
-    document.getElementById("barSpeed").style.width = car.speedVal + "%";
-    document.getElementById("specAccel").innerText = car.accel;
-    document.getElementById("barAccel").style.width = car.accelVal + "%";
-    document.getElementById("specHandling").innerText = car.handling;
-    document.getElementById("barHandling").style.width = car.handlingVal + "%";
-    document.getElementById("specNitro").innerText = car.nitro;
-    document.getElementById("barNitro").style.width = car.nitroVal + "%";
+          card.innerHTML = `
+              <div>
+                  <div class="mini-card-brand">${car.brand}</div>
+                  <div class="mini-card-model">${car.name}</div>
+              </div>
+              <div class="mini-card-img-box">
+                  <img src="${car.img}" alt="${car.name}">
+              </div>
+              <div class="mini-card-rank">${car.rankClass} ${car.rankScore}</div>
+          `;
+          deck.appendChild(card);
+      });
+  }
 
-    if (car.unlocked) {
-        lockOverlay.style.display = "none";
-        equipBtn.innerText = "SELECT CAR";
-        equipBtn.classList.remove("locked-btn");
-    } else {
-        lockOverlay.style.display = "flex";
-        equipBtn.innerText = "LOCKED 🔒";
-        equipBtn.classList.add("locked-btn");
-    }
-}
+  function updateCar() {
+      const car = cars[currentCar];
+      document.getElementById("carImage").src = car.img;
+      const lockOverlay = document.getElementById("lockOverlay");
+      const equipBtn = document.getElementById("equipCarBtn");
 
-function nextCar() {
-    currentCar++;
-    if (currentCar >= cars.length) currentCar = 0;
-    updateCar();
-}
+      document.getElementById("inspectCarBrand").innerText = car.brand;
+      document.getElementById("inspectCarName").innerText = car.name;
+      document.getElementById("inspectRankLetter").innerText = car.rankClass;
+      document.getElementById("inspectRankScore").innerText = car.rankScore;
 
-function prevCar() {
-    currentCar--;
-    if (currentCar < 0) currentCar = cars.length - 1;
-    updateCar();
-}
+      document.getElementById("barSpeed").style.width = car.speedVal + "%";
+      document.getElementById("specSpeed").innerText = car.speed;
+      document.getElementById("barAccel").style.width = car.accelVal + "%";
+      document.getElementById("specAccel").innerText = car.accel;
+      document.getElementById("barHandling").style.width = car.handlingVal + "%";
+      document.getElementById("specHandling").innerText = car.handling;
+      document.getElementById("barBraking").style.width = car.brakingVal + "%";
+      document.getElementById("specBraking").innerText = car.braking;
+      document.getElementById("barNitro").style.width = car.nitroVal + "%";
+      document.getElementById("specNitro").innerText = car.nitro;
 
-updateCar();
+      if (car.unlocked) {
+          lockOverlay.style.display = "none";
+          equipBtn.innerHTML = `<i class="fas fa-check-circle"></i> SELECT CAR`;
+          equipBtn.classList.remove("locked-btn");
+      } else {
+          lockOverlay.style.display = "flex";
+          equipBtn.innerHTML = `<i class="fas fa-lock"></i> LOCKED`;
+          equipBtn.classList.add("locked-btn");
+      }
 
-// CAR SELECTION MODE
-function enterCarSelectionMode() {
-    document.getElementById("main-menu-ui").style.display = "none";
-    document.getElementById("carCustomViewHUD").style.display = "block";
-    document.getElementById("leftArrow").style.display = "flex";
-    document.getElementById("rightArrow").style.display = "flex";
-    document.getElementById("carDisplay").style.transform = "translate(-50%, -52%) scale(1.1)";
-    updateCar();
-}
+      renderCarSelectorDeck();
+  }
 
-function exitCarSelectionMode() {
-    currentCar = selectedEquippedCar;
-    updateCar();
+  function nextCar() { currentCar++; if (currentCar >= cars.length) currentCar = 0; updateCar(); }
+  function prevCar() { currentCar--; if (currentCar < 0) currentCar = cars.length - 1; updateCar(); }
+  updateCar();
 
-    document.getElementById("main-menu-ui").style.display = "flex";
-    document.getElementById("carCustomViewHUD").style.display = "none";
-    document.getElementById("leftArrow").style.display = "none";
-    document.getElementById("rightArrow").style.display = "none";
-    document.getElementById("carDisplay").style.transform = "translate(-50%, -50%) scale(1)";
-}
+  function enterCarSelectionMode() {
+      document.getElementById("main-menu-ui").style.display = "none";
+      document.getElementById("carCustomViewHUD").style.display = "flex";
+      document.getElementById("leftArrow").style.display = "flex";
+      document.getElementById("rightArrow").style.display = "flex";
+      updateCar();
+  }
 
-function confirmEquipCar() {
-    if (!cars[currentCar].unlocked) {
-        alert("This car is locked!");
-        return;
-    }
-    selectedEquippedCar = currentCar;
-    document.getElementById("main-menu-ui").style.display = "flex";
-    document.getElementById("carCustomViewHUD").style.display = "none";
-    document.getElementById("leftArrow").style.display = "none";
-    document.getElementById("rightArrow").style.display = "none";
-    document.getElementById("carDisplay").style.transform = "translate(-50%, -50%) scale(1)";
-}
+  function exitCarSelectionMode() {
+      currentCar = selectedEquippedCar;
+      updateCar();
+      document.getElementById("main-menu-ui").style.display = "flex";
+      document.getElementById("carCustomViewHUD").style.display = "none";
+      document.getElementById("leftArrow").style.display = "none";
+      document.getElementById("rightArrow").style.display = "none";
+  }
 
-// MAP SELECTION MODE
-function enterMapSelectionMode() {
-    document.getElementById("mapSelectionHUD").style.display = "flex";
-    updateMapDisplay();
-}
+  function confirmEquipCar() {
+      if (!cars[currentCar].unlocked) {
+          showGameToast("THIS SUPERCAR IS LOCKED! UNLOCK FROM SHOP", "error", "fa-lock");
+          return;
+      }
+      selectedEquippedCar = currentCar;
+      showGameToast(`${cars[currentCar].brand} ${cars[currentCar].name} EQUIPPED!`, "success", "fa-check-circle");
+      exitCarSelectionMode();
+  }
 
-function exitMapSelectionMode() {
-    document.getElementById("mapSelectionHUD").style.display = "none";
-}
+  function enterMapSelectionMode() {
+      document.getElementById("mapSelectionHUD").style.display = "flex";
+      updateMapDisplay();
+  }
 
-function updateMapDisplay() {
-    const map = maps[currentMapIndex];
-    document.getElementById("mapCoverIcon").innerHTML = `<i class="fas ${map.icon}"></i>`;
-    document.getElementById("mapTitleLabel").innerText = map.title;
-    document.getElementById("mapStatsLabel").innerText = map.stats;
+  function exitMapSelectionMode() { document.getElementById("mapSelectionHUD").style.display = "none"; }
 
-    const mapLock = document.getElementById("mapLockOverlay");
-    const mapBtn = document.getElementById("equipMapBtn");
+  function updateMapDisplay() {
+      const map = maps[currentMapIndex];
+      document.getElementById("mapCoverIcon").innerHTML = `<i class="fas ${map.icon}"></i>`;
+      document.getElementById("mapTitleLabel").innerText = map.title;
+      document.getElementById("mapStatsLabel").innerText = map.stats;
 
-    if (map.unlocked) {
-        mapLock.style.display = "none";
-        mapBtn.innerText = "SELECT MAP";
-        mapBtn.classList.remove("locked-btn");
-    } else {
-        mapLock.style.display = "flex";
-        mapBtn.innerText = "LOCKED 🔒";
-        mapBtn.classList.add("locked-btn");
-    }
-}
+      const mapLock = document.getElementById("mapLockOverlay");
+      const mapBtn = document.getElementById("equipMapBtn");
 
-function nextMap() {
-    currentMapIndex++;
-    if (currentMapIndex >= maps.length) currentMapIndex = 0;
-    updateMapDisplay();
-}
+      if (map.unlocked) {
+          mapLock.style.display = "none";
+          mapBtn.innerText = "SELECT MAP";
+          mapBtn.classList.remove("locked-btn");
+      } else {
+          mapLock.style.display = "flex";
+          mapBtn.innerText = "LOCKED 🔒";
+          mapBtn.classList.add("locked-btn");
+      }
+  }
 
-function prevMap() {
-    currentMapIndex--;
-    if (currentMapIndex < 0) currentMapIndex = maps.length - 1;
-    updateMapDisplay();
-}
+  function nextMap() { currentMapIndex++; if (currentMapIndex >= maps.length) currentMapIndex = 0; updateMapDisplay(); }
+  function prevMap() { currentMapIndex--; if (currentMapIndex < 0) currentMapIndex = maps.length - 1; updateMapDisplay(); }
 
-function confirmSelectMap() {
-    if (!maps[currentMapIndex].unlocked) {
-        alert("This map is locked!");
-        return;
-    }
-    selectedMapName = maps[currentMapIndex].title;
-    document.getElementById("currentSelectedMapLabel").innerText = selectedMapName;
-    document.getElementById("loaderTrackName").innerText = "TRACK: " + selectedMapName;
-    exitMapSelectionMode();
-}
+  function confirmSelectMap() {
+      if (!maps[currentMapIndex].unlocked) {
+          showGameToast("THIS TRACK IS LOCKED!", "error", "fa-lock");
+          return;
+      }
+      selectedMapName = maps[currentMapIndex].title;
+      document.getElementById("loaderTrackName").innerText = "TRACK: " + selectedMapName;
+      showGameToast(`TRACK SET TO ${selectedMapName}`, "success", "fa-map-marker-alt");
+      exitMapSelectionMode();
+  }
 
-// AUDIO CLICK SFX
-const clickSound = new Audio("/static/sounds/bg1-music.mp3");
-clickSound.preload = "auto";
+  let isMatchmakingActive = false;
 
-document.querySelectorAll("button, a, .menu-card, .user-profile-badge, .social-circle-btn").forEach(el => {
-    el.addEventListener("click", () => {
-        const sound = clickSound.cloneNode();
-        sound.play().catch(() => {});
-    });
-});
+  function playGame() {
+      if (isMatchmakingActive) return;
+      if (!cars[selectedEquippedCar].unlocked) {
+          showGameToast("SELECT AN UNLOCKED CAR FIRST!", "error", "fa-car");
+          return;
+      }
 
-// START RACE LOGIC WITH LOADING SCREEN
-function playGame() {
-    if (!cars[selectedEquippedCar].unlocked) {
-        alert("Select an unlocked car to play!");
-        return;
-    }
+      isMatchmakingActive = true;
+      
+      const playBtn = document.getElementById("playBtn");
+      const quickRaceBtn = document.getElementById("quickRaceBtn");
+      if (playBtn) playBtn.classList.add("disabled-btn");
+      if (quickRaceBtn) quickRaceBtn.classList.add("disabled-btn");
 
-    timer = 5;
-    const matchHUD = document.getElementById("matchText");
-    matchHUD.style.display = "flex";
-    document.getElementById("matchTimer").innerText = timer;
+      timer = 5;
+      const matchHUD = document.getElementById("matchText");
+      matchHUD.style.display = "flex";
+      document.getElementById("matchTimer").innerText = timer;
 
-    countdown = setInterval(function() {
-        timer--;
-        document.getElementById("matchTimer").innerText = timer;
+      countdown = setInterval(function() {
+          timer--;
+          document.getElementById("matchTimer").innerText = timer;
 
-        if (timer <= 0) {
-            clearInterval(countdown);
-            matchHUD.style.display = "none";
-            document.getElementById("main-menu-ui").style.display = "none";
-            document.getElementById("carDisplay").style.display = "none";
+          if (timer <= 0) {
+              clearInterval(countdown);
+              matchHUD.style.display = "none";
+              document.getElementById("main-menu-ui").style.display = "none";
+              document.getElementById("carDisplay").style.display = "none";
 
-            // Agar Unity abhi bhi download ho raha hai toh Loading Screen dikhao
-            if (!isUnityLoaded) {
-                window.isWaitingForGameToStart = true;
-                const loadScreen = document.getElementById("gameLoadingScreen");
-                loadScreen.style.display = "flex";
-                updateLoadingProgress(unityLoadProgress);
-            } else {
-                triggerGameLaunch();
-            }
-        }
-    }, 1000);
-}
+              if (!isUnityLoaded) {
+                  window.isWaitingForGameToStart = true;
+                  const loadScreen = document.getElementById("gameLoadingScreen");
+                  loadScreen.style.display = "flex";
+                  updateLoadingProgress(unityLoadProgress);
+              } else {
+                  triggerGameLaunch();
+              }
+          }
+      }, 1000);
+  }
 
-function triggerGameLaunch() {
-    const loadScreen = document.getElementById("gameLoadingScreen");
-    if (loadScreen) {
-        loadScreen.style.display = "flex";
-        updateLoadingProgress(100);
-        setTimeout(() => {
-            loadScreen.style.opacity = "0";
-            setTimeout(() => {
-                loadScreen.style.display = "none";
-                loadScreen.style.opacity = "1";
-                document.getElementById("unity-canvas").style.display = "block";
-                if (globalUnityInstance) {
-                    globalUnityInstance.SendMessage("GameManager", "StartGame");
-                }
-            }, 400);
-        }, 300);
-    } else {
-        document.getElementById("unity-canvas").style.display = "block";
-        if (globalUnityInstance) {
-            globalUnityInstance.SendMessage("GameManager", "StartGame");
-        }
-    }
-}
+  function cancelMatch() {
+      clearInterval(countdown);
+      isMatchmakingActive = false;
+      document.getElementById("matchText").style.display = "none";
 
-function cancelMatch() {
-    clearInterval(countdown);
-    document.getElementById("matchText").style.display = "none";
-}
+      const playBtn = document.getElementById("playBtn");
+      const quickRaceBtn = document.getElementById("quickRaceBtn");
+      if (playBtn) playBtn.classList.remove("disabled-btn");
+      if (quickRaceBtn) quickRaceBtn.classList.remove("disabled-btn");
 
-function openSettings() { document.getElementById("settings-menu").style.display = "flex"; }
-function closeSettings() { document.getElementById("settings-menu").style.display = "none"; }
+      showGameToast("MATCHMAKING CANCELLED", "info", "fa-ban");
+  }
 
-function showComingSoon() {
-    let popup = document.getElementById("comingSoonPopup");
-    popup.style.display = "block";
-    setTimeout(() => { popup.style.display = "none"; }, 1800);
-}
+  function triggerGameLaunch() {
+      const loadScreen = document.getElementById("gameLoadingScreen");
+      if (loadScreen) {
+          loadScreen.style.display = "flex";
+          updateLoadingProgress(100);
+          setTimeout(() => {
+              loadScreen.style.opacity = "0";
+              setTimeout(() => {
+                  loadScreen.style.display = "none";
+                  loadScreen.style.opacity = "1";
+                  document.getElementById("unity-canvas").style.display = "block";
+                  if (globalUnityInstance) {
+                      globalUnityInstance.SendMessage("GameManager", "StartGame");
+                  }
+              }, 400);
+          }, 300);
+      }
+  }
 
-function goToProfile() {
-    setTimeout(() => {
-        window.location.href = "/profile";
-    }, 150);
-}
+  function openSettings() { document.getElementById("settings-menu").style.display = "flex"; }
+  function closeSettings() { document.getElementById("settings-menu").style.display = "none"; }
+  function goToProfile() { window.location.href = "/profile"; }
 </script>
 
 </body>

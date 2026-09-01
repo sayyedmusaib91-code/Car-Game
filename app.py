@@ -14,7 +14,6 @@ database.init_db()
 def generate_player_id():
     return str(random.randint(1000000000, 9999999999))
 
-# --- Validation Helper Functions ---
 def is_valid_mobile(phone):
     return bool(re.match(r'^[6-9]\d{9}$', phone))
 
@@ -26,8 +25,6 @@ def is_strong_password(password):
     if not re.search(r'[a-zA-Z]', password):
         return False, "Password must contain at least one letter!"
     return True, "Strong password"
-
-# --- Routes ---
 
 @app.route('/')
 def home():
@@ -188,6 +185,67 @@ def get_player_stats():
         "max_xp": 1000
     })
 
+# --- Friend System Routes ---
+
+@app.route('/search_driver')
+def search_driver():
+    user_id = session.get('user_id')
+    if not user_id or user_id == -1:
+        return jsonify({"success": False, "message": "Please login to search drivers."}), 401
+        
+    pid = request.args.get('player_id', '').strip()
+    if not pid:
+        return jsonify({"success": False, "message": "Enter a valid Player ID."}), 400
+        
+    driver_data, err = database.search_driver_by_player_id(pid, user_id)
+    if err:
+        return jsonify({"success": False, "message": err}), 404
+        
+    return jsonify({"success": True, "driver": driver_data})
+
+@app.route('/send_friend_request', methods=['POST'])
+def send_request():
+    user_id = session.get('user_id')
+    if not user_id or user_id == -1:
+        return jsonify({"success": False, "message": "Please login first."}), 401
+        
+    data = request.get_json() or {}
+    receiver_pid = data.get('player_id')
+    
+    success, msg = database.send_friend_request(user_id, receiver_pid)
+    return jsonify({"success": success, "message": msg})
+
+@app.route('/get_mail_requests')
+def get_mail_requests():
+    user_id = session.get('user_id')
+    if not user_id or user_id == -1:
+        return jsonify({"success": False, "requests": []})
+        
+    requests = database.get_incoming_friend_requests(user_id)
+    return jsonify({"success": True, "requests": requests, "count": len(requests)})
+
+@app.route('/respond_request', methods=['POST'])
+def respond_request():
+    user_id = session.get('user_id')
+    if not user_id or user_id == -1:
+        return jsonify({"success": False}), 401
+        
+    data = request.get_json() or {}
+    req_id = data.get('request_id')
+    action = data.get('action') # 'accept' ya 'reject'
+    
+    success = database.respond_to_friend_request(req_id, user_id, action)
+    return jsonify({"success": success})
+
+@app.route('/get_friends')
+def get_friends():
+    user_id = session.get('user_id')
+    if not user_id or user_id == -1:
+        return jsonify({"success": False, "friends": []})
+        
+    friends = database.get_friends_list(user_id)
+    return jsonify({"success": True, "friends": friends})
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -207,33 +265,6 @@ def save_race():
 
     save_race_result(user_id, position, score)
     return jsonify({"status": "success"})
-
-@app.route('/get_profile')
-def get_profile():
-    if "user_id" not in session:
-        return jsonify({"error": "Not logged in"}), 401
-
-    user_id = session["user_id"]
-    if user_id == -1:
-        return jsonify({
-            "username": "Guest",
-            "player_id": "GUEST",
-            "level": 1,
-            "total_score": 0,
-            "races": []
-        })
-
-    user, races = database.get_profile_data(user_id)
-    if user is None:
-        return jsonify({"error": "User not found"}), 401
-
-    return jsonify({
-        "username": user[0],
-        "player_id": user[1],
-        "level": user[2],
-        "total_score": user[3],
-        "races": [{"position": r[0], "score": r[1], "race_date": r[2]} for r in races]
-    })
 
 @app.route('/profile')
 def profile():

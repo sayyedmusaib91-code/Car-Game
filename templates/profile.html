@@ -27,6 +27,51 @@ body, html {
     color: #ffffff;
 }
 
+/* ========================================================
+   IN-GAME TOAST NOTIFICATION HUD (NO BROWSER ALERTS)
+   ======================================================== */
+#gameNotificationHUD {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(10, 14, 22, 0.96);
+    border: 2px solid #ffd000;
+    padding: 12px 28px;
+    border-radius: 8px;
+    box-shadow: 0 0 35px rgba(255, 208, 0, 0.5), inset 0 0 15px rgba(255, 208, 0, 0.15);
+    backdrop-filter: blur(12px);
+    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+#gameNotificationHUD.show {
+    top: 24px;
+}
+
+.hud-notify-icon {
+    font-size: 1.4rem;
+    color: #ffd000;
+}
+
+.hud-notify-msg {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+#gameNotificationHUD.hud-success { border-color: #22c55e; box-shadow: 0 0 35px rgba(34, 197, 94, 0.5); }
+#gameNotificationHUD.hud-success .hud-notify-icon { color: #22c55e; }
+#gameNotificationHUD.hud-error { border-color: #ef4444; box-shadow: 0 0 35px rgba(239, 68, 68, 0.5); }
+#gameNotificationHUD.hud-error .hud-notify-icon { color: #ef4444; }
+
 /* MAIN DASHBOARD WRAPPER */
 .dashboard-container {
     width: 100vw;
@@ -143,11 +188,12 @@ body, html {
 
 .header-icons i {
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.2s;
 }
 
 .header-icons i:hover {
-    color: white;
+    color: #ffd000;
+    transform: scale(1.15);
 }
 
 /* 2. BODY LAYOUT */
@@ -326,7 +372,9 @@ body, html {
     font-size: 0.9rem;
     color: #eab308;
     cursor: pointer;
+    transition: transform 0.2s;
 }
+.edit-icon:hover { transform: scale(1.15); }
 
 .vip-rank-pill {
     background: #8b5cf6;
@@ -550,7 +598,10 @@ body, html {
     font-weight: 800;
     color: #64748b;
     cursor: pointer;
+    transition: color 0.2s;
 }
+
+.panel-view-all:hover { color: #ffd000; }
 
 .achieve-items-row {
     display: flex;
@@ -566,6 +617,7 @@ body, html {
     text-align: center;
     gap: 4px;
     flex: 1;
+    cursor: pointer;
 }
 
 .badge-icon-wrap {
@@ -578,6 +630,11 @@ body, html {
     align-items: center;
     justify-content: center;
     font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.achieve-badge-item:hover .badge-icon-wrap {
+    transform: scale(1.15);
 }
 
 .achieve-name {
@@ -610,6 +667,13 @@ body, html {
     justify-content: center;
     font-size: 0.75rem;
     color: #94a3b8;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.badge-mini-icon:hover {
+    transform: scale(1.15);
+    background: rgba(255, 208, 0, 0.15);
 }
 
 /* CAREER HISTORY VIEW */
@@ -656,6 +720,12 @@ body, html {
   data-maxxp="{{ max_xp or 1000 }}"
   data-level="{{ level or 1 }}">
 
+<!-- IN-GAME HUD TOAST NOTIFICATION CONTAINER -->
+<div id="gameNotificationHUD">
+    <i class="fas fa-bell hud-notify-icon" id="hudNotifyIcon"></i>
+    <span class="hud-notify-msg" id="hudNotifyText">NOTIFICATION</span>
+</div>
+
 <div class="dashboard-container">
     <div class="dashboard-content">
 
@@ -681,10 +751,10 @@ body, html {
                 </div>
                 
                 <div class="header-icons">
-                    <i class="fas fa-user-friends" title="Friends"></i>
-                    <i class="fas fa-envelope" title="Mailbox"></i>
-                    <i class="fas fa-bell" title="Notifications"></i>
-                    <i class="fas fa-cog" title="Settings"></i>
+                    <i class="fas fa-user-friends" onclick="showGameToast('OPEN MAIN MENU FOR DRIVER NETWORK', 'info', 'fa-user-friends')" title="Friends"></i>
+                    <i class="fas fa-envelope" onclick="showGameToast('OPEN MAIN MENU FOR MAILBOX', 'info', 'fa-envelope')" title="Mailbox"></i>
+                    <i class="fas fa-bell" onclick="showGameToast('NO NEW DRIVER ALERTS', 'info', 'fa-bell')" title="Notifications"></i>
+                    <i class="fas fa-cog" onclick="showGameToast('SETTINGS ACCESSIBLE IN MAIN MENU', 'info', 'fa-cog')" title="Settings"></i>
                 </div>
             </div>
         </header>
@@ -701,16 +771,16 @@ body, html {
                     <button class="tab-btn" id="btnHistoryTab" onclick="switchTab('history')">
                         <i class="fas fa-history"></i> HISTORY
                     </button>
-                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                    <button class="tab-btn" onclick="showGameToast('EXTENDED TELEMETRY STATS COMING SOON', 'info', 'fa-chart-bar')">
                         <i class="fas fa-chart-bar"></i> STATS
                     </button>
-                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                    <button class="tab-btn" onclick="showGameToast('GARAGE SHOWCASE COMING SOON', 'info', 'fa-car')">
                         <i class="fas fa-car"></i> CARS
                     </button>
-                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                    <button class="tab-btn" onclick="showGameToast('LIVERY & BODY CUSTOMIZER COMING SOON', 'info', 'fa-paint-brush')">
                         <i class="fas fa-paint-brush"></i> CUSTOMIZE
                     </button>
-                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                    <button class="tab-btn" onclick="showGameToast('SEASON BADGES TIERS LOCKED', 'info', 'fa-trophy')">
                         <i class="fas fa-trophy"></i> BADGES
                     </button>
                 </div>
@@ -728,13 +798,13 @@ body, html {
                 <section class="user-hero-card">
                     <div class="user-identity-box">
                         <div class="avatar-hexagon-glow">
-                            <div class="avatar-inner-box">H</div>
+                            <div class="avatar-inner-box">{{ username[0]|upper if username else 'R' }}</div>
                         </div>
 
                         <div class="user-details">
                             <div class="user-title-row">
                                 <span class="user-title-name">{{ username or 'RACER' }}</span>
-                                <i class="fas fa-pen-square edit-icon"></i>
+                                <i class="fas fa-pen-square edit-icon" onclick="showGameToast('ALIAS EDIT LOCKED BY RACE MARSHAL', 'info', 'fa-lock')"></i>
                             </div>
                             <span class="vip-rank-pill">LEGEND</span>
 
@@ -825,21 +895,21 @@ body, html {
                         <div>
                             <div class="panel-header-row">
                                 <span class="panel-head-title">RECENT ACHIEVEMENTS</span>
-                                <span class="panel-view-all">VIEW ALL</span>
+                                <span class="panel-view-all" onclick="showGameToast('COMPLETE CAREER RACES TO UNLOCK MORE', 'info', 'fa-trophy')">VIEW ALL</span>
                             </div>
 
                             <div class="achieve-items-row">
-                                <div class="achieve-badge-item">
+                                <div class="achieve-badge-item" onclick="showGameToast('SPEED DEMON: REACH 300 KM/H', 'info', 'fa-tachometer-alt')">
                                     <div class="badge-icon-wrap" style="color:#c084fc; border-color:#c084fc;"><i class="fas fa-tachometer-alt"></i></div>
                                     <span class="achieve-name">SPEED DEMON</span>
                                     <span class="achieve-sub">Reach 300 KM/H</span>
                                 </div>
-                                <div class="achieve-badge-item">
+                                <div class="achieve-badge-item" onclick="showGameToast('CLEAN RUN: FINISH WITHOUT DAMAGE', 'info', 'fa-shield-alt')">
                                     <div class="badge-icon-wrap" style="color:#38bdf8; border-color:#38bdf8;"><i class="fas fa-shield-alt"></i></div>
                                     <span class="achieve-name">CLEAN RUN</span>
                                     <span class="achieve-sub">No damage race</span>
                                 </div>
-                                <div class="achieve-badge-item">
+                                <div class="achieve-badge-item" onclick="showGameToast('DRIFT KING: ACCUMULATE 25,000 PTS', 'info', 'fa-crown')">
                                     <div class="badge-icon-wrap" style="color:#eab308; border-color:#eab308;"><i class="fas fa-crown"></i></div>
                                     <span class="achieve-name">DRIFT KING</span>
                                     <span class="achieve-sub">Score 25,000 pts</span>
@@ -850,16 +920,16 @@ body, html {
                         <div>
                             <div class="panel-header-row" style="margin-bottom:6px;">
                                 <span class="panel-head-title">BADGES</span>
-                                <span class="panel-view-all">VIEW ALL</span>
+                                <span class="panel-view-all" onclick="showGameToast('BADGE SHOWCASE UNLOCKED IN SEASON 1', 'info', 'fa-shield-alt')">VIEW ALL</span>
                             </div>
 
                             <div class="badges-row-strip">
-                                <div class="badge-mini-icon"><i class="fas fa-star" style="color:#eab308;"></i></div>
-                                <div class="badge-mini-icon"><i class="fas fa-flag"></i></div>
-                                <div class="badge-mini-icon"><i class="fas fa-skull"></i></div>
-                                <div class="badge-mini-icon"><i class="fas fa-fire" style="color:#ef4444;"></i></div>
-                                <div class="badge-mini-icon"><i class="fas fa-bolt" style="color:#38bdf8;"></i></div>
-                                <div class="badge-mini-icon"><i class="fas fa-trophy" style="color:#a855f7;"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('HONORARY RACER BADGE', 'success', 'fa-star')"><i class="fas fa-star" style="color:#eab308;"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('CIRCUIT DRIVER BADGE', 'info', 'fa-flag')"><i class="fas fa-flag"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('SPEED OUTLAW BADGE', 'info', 'fa-skull')"><i class="fas fa-skull"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('NITRO OVERLOAD BADGE', 'info', 'fa-fire')"><i class="fas fa-fire" style="color:#ef4444;"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('HYPER ENGINE BADGE', 'info', 'fa-bolt')"><i class="fas fa-bolt" style="color:#38bdf8;"></i></div>
+                                <div class="badge-mini-icon" onclick="showGameToast('CHAMPION CUP BADGE', 'info', 'fa-trophy')"><i class="fas fa-trophy" style="color:#a855f7;"></i></div>
                             </div>
                         </div>
                     </div>
@@ -908,6 +978,28 @@ body, html {
 </div>
 
 <script>
+// In-Game Custom HUD Toast Notification function
+let notifyTimeout = null;
+function showGameToast(msg, type = 'info', iconClass = 'fa-bell') {
+    const hud = document.getElementById("gameNotificationHUD");
+    const icon = document.getElementById("hudNotifyIcon");
+    const text = document.getElementById("hudNotifyText");
+
+    hud.className = '';
+    if (type === 'success') hud.classList.add('hud-success');
+    else if (type === 'error') hud.classList.add('hud-error');
+
+    icon.className = `fas ${iconClass} hud-notify-icon`;
+    text.innerText = msg;
+
+    hud.classList.add("show");
+
+    if (notifyTimeout) clearTimeout(notifyTimeout);
+    notifyTimeout = setTimeout(() => {
+        hud.classList.remove("show");
+    }, 2600);
+}
+
 // Dynamic XP Bar Calculation
 document.addEventListener("DOMContentLoaded", () => {
     const currentXp = parseFloat(document.body.getAttribute('data-currentxp')) || 0;
