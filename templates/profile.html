@@ -1,276 +1,944 @@
 <!-- @ts-nocheck -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Profile - Horizon</title>
 
-<title>Player Profile</title>
+<!-- Fonts & Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#111;
-color:white;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    font-family: 'Montserrat', sans-serif;
 }
 
-/* Center container */
-.profile-container{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #06080d;
+    color: #ffffff;
 }
 
-/* Main box */
-.profile-box{
-top: 40%;
-display:flex;
-width:900px;
-background:#222;
-border-radius:12px;
-padding:20px;
-box-shadow:0 0 15px rgba(0,0,0,0.5);
+/* MAIN DASHBOARD WRAPPER */
+.dashboard-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at 80% 20%, rgba(30, 20, 50, 0.8) 0%, rgba(6, 8, 13, 0.98) 75%),
+                url("/static/image/main3.png") center/cover no-repeat;
+    position: relative;
+    padding: 16px 28px;
 }
 
-/* Left section (avatar) */
-.profile-left{
-width:200px;
-text-align:center;
-border-right:1px solid #555;
-padding:20px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
+.dashboard-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(6, 8, 13, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 1;
 }
 
-.profile-pic{
-width:90px;
-height:90px;
-border-radius:50%;
-object-fit:cover;
-margin-bottom:5px;
-border:3px solid white;
+.dashboard-content {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-/* Middle section */
-.profile-middle{
-flex:1;
-padding:20px;
-border-right:1px solid #555;
+/* 1. TOP HEADER */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 44px;
+    margin-bottom: 12px;
 }
 
-/* Right section */
-.profile-right{
-flex:1;
-padding:20px;
+.back-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
 }
 
-/* Titles */
-h2,h3{
-margin-top:0;
+.back-arrow-btn {
+    font-size: 1.2rem;
+    font-weight: 900;
+    transition: transform 0.2s;
 }
 
-/* Level bar */
-.level-bar{
-width:100%;
-height:12px;
-background:#444;
-border-radius:6px;
-margin-top:8px;
+.back-title-group:hover .back-arrow-btn {
+    transform: translateX(-4px);
+    color: #ffd000;
 }
 
-.level-fill{
-width:0%;   /* 🔥 fixed hatao */
-height:12px;
-background: linear-gradient(90deg, #00ffcc, #00ccff);
-box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ccff;
-border-radius:6px;
-transition: 0.8s ease; /* smooth animation */
+.nav-page-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-style: italic;
+    text-transform: uppercase;
 }
 
-/* race list */
-ul{
-padding-left:18px;
+.top-currency-cluster {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: rgba(15, 18, 26, 0.9);
+    padding: 6px 18px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* back button */
-.back-btn{
-margin-top:20px;
-padding:12px 25px;
-background: linear-gradient(45deg, #000000, #000000);
-border:none;
-color:white;
-border-radius:25px;
-cursor:pointer;
-font-weight:bold;
-font-size:14px;
-letter-spacing:1px;
-transition: all 0.3s ease;
-box-shadow: 0 0 10px rgba(193, 193, 193, 0.6);
+.curr-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+    font-weight: 800;
 }
 
-/* Hover effect */
-.back-btn:hover{
-transform: scale(1.08);
-box-shadow: 0 0 20px rgb(3, 3, 3);
+.curr-icon-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 900;
 }
 
-/* Click effect */
-.back-btn:active{
-transform: scale(0.95);
+.cr-bg { background: #ec4899; color: white; }
+.star-bg { color: #eab308; font-size: 0.9rem; }
+.gem-bg { color: #38bdf8; font-size: 0.9rem; }
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #94a3b8;
+    margin-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    padding-left: 16px;
 }
 
-
-
-.back-btn{
-animation: glowPulse 2s infinite;
+.header-icons i {
+    cursor: pointer;
+    transition: color 0.2s;
 }
 
-.race-table{
-width:100%;
-border-collapse:collapse;
-font-size:14px;
+.header-icons i:hover {
+    color: white;
 }
 
-.race-table th{
-text-align:left;
-padding:6px 10px;
-color:#ffffff;
-border-bottom:2px solid #ffffff;
+/* 2. BODY LAYOUT */
+.main-layout {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    overflow: hidden;
 }
 
-.race-table td{
-padding:5px 10px;
-border-bottom:1px solid #444;
+/* Left Sidebar Tabs */
+.sidebar-nav {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.race-table tr:hover{
-background: rgba(0,255,255,0.1);
-transition: 0.2s;
+.nav-tabs-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.profile-right{
-flex:1;
-padding:20px;
-max-height:350px;      /* height fix */
-overflow-y:auto;      /* sirf yahi scroll hoga */
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
 }
 
-.section-title{
-margin-top:20px;
-margin-bottom:8px;
-padding-bottom:4px;
-border-bottom:2px solid #ffffff;
-color:#ffffff;
-font-size:22px;
-font-weight:bold;
-
-
--webkit-text-stroke: 0.8px #000000;
-
+.tab-btn i {
+    font-size: 1.05rem;
+    width: 20px;
 }
 
-.username{
-margin-top:10px;
-margin-bottom:0;
+.tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
+.tab-btn.active {
+    background: #ffd000;
+    color: #000000;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(255, 208, 0, 0.4);
+}
+
+.brand-badge {
+    padding: 10px 0;
+}
+
+.brand-badge-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.brand-badge-sub {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #ef4444;
+    letter-spacing: 2px;
+}
+
+/* Right Content Area */
+.profile-main-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.profile-main-display::-webkit-scrollbar {
+    width: 4px;
+}
+.profile-main-display::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+/* HERO CARD WITH BACKGROUND BANNER */
+.user-hero-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 20px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    background: url("/static/image/pr1.png") right center/cover no-repeat;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.user-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(8, 10, 16, 0.96) 0%, rgba(8, 10, 16, 0.88) 45%, rgba(8, 10, 16, 0.3) 100%);
+    z-index: 1;
+}
+
+.user-identity-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.avatar-hexagon-glow {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+}
+
+.avatar-inner-box {
+    width: 100%;
+    height: 100%;
+    background: #090c14;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 900;
+    font-style: italic;
+    color: white;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-title-name {
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.edit-icon {
+    font-size: 0.9rem;
+    color: #eab308;
+    cursor: pointer;
+}
+
+.vip-rank-pill {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    width: fit-content;
+    text-transform: uppercase;
+}
+
+.xp-level-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.level-tag-badge {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.xp-text-count {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.xp-bar-long {
+    width: 220px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.xp-bar-long-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #c084fc);
+    width: 0%;
+    transition: width 0.8s ease;
+}
+
+.user-extra-meta {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* STATS ROW TILES */
+.stats-tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.stat-card-tile {
+    background: rgba(15, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-tile-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-tile-val {
+    font-size: 1.35rem;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+    margin-top: 2px;
+}
+
+.stat-tile-footer {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+/* LOWER SPLIT SECTIONS */
+.lower-sections-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 14px;
+}
+
+/* Favorite Car Showcase Card */
+.favorite-car-box {
+    background: rgba(15, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fav-car-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.fav-title-sub {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.fav-car-name {
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.car-class-badge {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.fav-car-center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+
+.fav-car-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.fav-car-specs span b {
+    color: white;
+}
+
+.fav-car-img {
+    width: 220px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.9));
+}
+
+.fav-car-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.fav-car-footer:hover {
+    color: #ffd000;
+}
+
+/* Recent Achievements & Badges Panel */
+.achievements-panel {
+    background: rgba(15, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.panel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-head-title {
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.panel-view-all {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.achieve-items-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.achieve-badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.badge-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.achieve-name {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: white;
+}
+
+.achieve-sub {
+    font-size: 0.52rem;
+    color: #64748b;
+}
+
+.badges-row-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+}
+
+.badge-mini-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* CAREER HISTORY VIEW */
+#historyViewPanel {
+    display: none;
+    background: rgba(15, 18, 26, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    height: 100%;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.history-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #ffd000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    text-transform: uppercase;
+}
+
+.history-table td {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.history-table tr:hover {
+    background: rgba(255, 208, 0, 0.08);
+}
 </style>
-
 </head>
 
 <body 
-data-currentxp="{{ current_xp }}" 
-data-maxxp="{{ max_xp }}"
-data-levelup="{{ level_up }}">
+  data-currentxp="{{ current_xp or 0 }}" 
+  data-maxxp="{{ max_xp or 1000 }}"
+  data-level="{{ level or 1 }}">
 
-<div class="profile-container">
+<div class="dashboard-container">
+    <div class="dashboard-content">
 
-<div class="profile-box">
+        <!-- TOP BAR -->
+        <header class="top-nav">
+            <a href="/main_menu" class="back-title-group" title="Return to Main Menu">
+                <span class="back-arrow-btn"><i class="fas fa-chevron-left"></i></span>
+                <span class="nav-page-title">PROFILE</span>
+            </a>
 
-<!-- LEFT -->
-<div class="profile-left">
-<img src="/static/image/profile1.png" class="profile-pic">
-<h2 class="username">{{ username }}</h2>
-<a href="/main_menu">
-<button class="back-btn">← Back To MainMenu</button>
-</a>
+            <div class="top-currency-cluster">
+                <div class="curr-item">
+                    <div class="curr-icon-circle cr-bg">CR</div>
+                    <span>0</span>
+                </div>
+                <div class="curr-item">
+                    <i class="fas fa-star star-bg"></i>
+                    <span>0</span>
+                </div>
+                <div class="curr-item">
+                    <i class="fas fa-gem gem-bg"></i>
+                    <span>0</span>
+                </div>
+                
+                <div class="header-icons">
+                    <i class="fas fa-user-friends" title="Friends"></i>
+                    <i class="fas fa-envelope" title="Mailbox"></i>
+                    <i class="fas fa-bell" title="Notifications"></i>
+                    <i class="fas fa-cog" title="Settings"></i>
+                </div>
+            </div>
+        </header>
 
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            
+            <!-- LEFT NAVIGATION TABS -->
+            <aside class="sidebar-nav">
+                <div class="nav-tabs-group">
+                    <button class="tab-btn active" id="btnOverviewTab" onclick="switchTab('overview')">
+                        <i class="fas fa-th-large"></i> OVERVIEW
+                    </button>
+                    <button class="tab-btn" id="btnHistoryTab" onclick="switchTab('history')">
+                        <i class="fas fa-history"></i> HISTORY
+                    </button>
+                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                        <i class="fas fa-chart-bar"></i> STATS
+                    </button>
+                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                        <i class="fas fa-car"></i> CARS
+                    </button>
+                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                        <i class="fas fa-paint-brush"></i> CUSTOMIZE
+                    </button>
+                    <button class="tab-btn" onclick="alert('Feature coming soon!')">
+                        <i class="fas fa-trophy"></i> BADGES
+                    </button>
+                </div>
+
+                <div class="brand-badge">
+                    <div class="brand-badge-title">CAR CLASH</div>
+                    <div class="brand-badge-sub">HORIZON</div>
+                </div>
+            </aside>
+
+            <!-- RIGHT PROFILE CONTENT -->
+            <main class="profile-main-display" id="overviewPanel">
+                
+                <!-- 1. USER HERO IDENTITY CARD (WITH INTEGRATED BANNER BACKGROUND) -->
+                <section class="user-hero-card">
+                    <div class="user-identity-box">
+                        <div class="avatar-hexagon-glow">
+                            <div class="avatar-inner-box">H</div>
+                        </div>
+
+                        <div class="user-details">
+                            <div class="user-title-row">
+                                <span class="user-title-name">{{ username or 'RACER' }}</span>
+                                <i class="fas fa-pen-square edit-icon"></i>
+                            </div>
+                            <span class="vip-rank-pill">LEGEND</span>
+
+                            <div class="xp-level-row">
+                                <span class="level-tag-badge" id="profileLevelDisplay">{{ level or '1' }}</span>
+                                <span class="xp-text-count">{{ current_xp or 0 }} / {{ max_xp or 1000 }} XP</span>
+                                <div class="xp-bar-long">
+                                    <div class="xp-bar-long-fill" id="profileXpFill"></div>
+                                </div>
+                            </div>
+
+                            <div class="user-extra-meta">
+                                JOINED: RECENT &bull; PLAYER ID: {{ player_id or 'CR-7K8M-2D9F' }}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. STATS TILES ROW -->
+                <section class="stats-tiles-grid">
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="far fa-clock" style="color:#a855f7;"></i> TIME DRIVEN</div>
+                        <div class="stat-tile-val">0<span style="font-size:0.85rem;">h</span> 0<span style="font-size:0.85rem;">m</span></div>
+                        <div class="stat-tile-footer">Time spent in game</div>
+                    </div>
+
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="fas fa-trophy" style="color:#eab308;"></i> RACES WON</div>
+                        <div class="stat-tile-val">0</div>
+                        <div class="stat-tile-footer">Total Wins</div>
+                    </div>
+
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="fas fa-flag-checkered" style="color:#38bdf8;"></i> RACES PLAYED</div>
+                        <div class="stat-tile-val">{{ races|length if races else 0 }}</div>
+                        <div class="stat-tile-footer">Total Races</div>
+                    </div>
+
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="fas fa-bolt" style="color:#eab308;"></i> TOTAL SCORE</div>
+                        <div class="stat-tile-val">{{ total_score or 0 }}</div>
+                        <div class="stat-tile-footer">Career Points</div>
+                    </div>
+
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="fas fa-road" style="color:#22c55e;"></i> DISTANCE</div>
+                        <div class="stat-tile-val">0 <span style="font-size:0.85rem;">km</span></div>
+                        <div class="stat-tile-footer">Total Distance</div>
+                    </div>
+
+                    <div class="stat-card-tile">
+                        <div class="stat-tile-header"><i class="fas fa-coins" style="color:#22c55e;"></i> CASH EARNED</div>
+                        <div class="stat-tile-val">0</div>
+                        <div class="stat-tile-footer">Total Credits</div>
+                    </div>
+                </section>
+
+                <!-- 3. LOWER SECTION: FAVORITE CAR & ACHIEVEMENTS -->
+                <section class="lower-sections-grid">
+                    
+                    <!-- Favorite Car -->
+                    <div class="favorite-car-box">
+                        <div class="fav-car-header">
+                            <div>
+                                <div class="fav-title-sub">FAVORITE CAR</div>
+                                <div class="fav-car-name">BUGATTI CHIRON</div>
+                                <span class="car-class-badge">CLASS S | 900</span>
+                            </div>
+                        </div>
+
+                        <div class="fav-car-center">
+                            <div class="fav-car-specs">
+                                <span>TOP SPEED: <b>420 KM/H</b></span>
+                                <span>POWER: <b>1500 HP</b></span>
+                                <span>0-100 KM/H: <b>2.4 s</b></span>
+                            </div>
+                            <img src="/static/image/n1.png" class="fav-car-img" alt="Bugatti">
+                        </div>
+
+                        <div class="fav-car-footer" onclick="window.location.href='/main_menu'">
+                            <span>VIEW IN GARAGE</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Achievements & Badges -->
+                    <div class="achievements-panel">
+                        <div>
+                            <div class="panel-header-row">
+                                <span class="panel-head-title">RECENT ACHIEVEMENTS</span>
+                                <span class="panel-view-all">VIEW ALL</span>
+                            </div>
+
+                            <div class="achieve-items-row">
+                                <div class="achieve-badge-item">
+                                    <div class="badge-icon-wrap" style="color:#c084fc; border-color:#c084fc;"><i class="fas fa-tachometer-alt"></i></div>
+                                    <span class="achieve-name">SPEED DEMON</span>
+                                    <span class="achieve-sub">Reach 300 KM/H</span>
+                                </div>
+                                <div class="achieve-badge-item">
+                                    <div class="badge-icon-wrap" style="color:#38bdf8; border-color:#38bdf8;"><i class="fas fa-shield-alt"></i></div>
+                                    <span class="achieve-name">CLEAN RUN</span>
+                                    <span class="achieve-sub">No damage race</span>
+                                </div>
+                                <div class="achieve-badge-item">
+                                    <div class="badge-icon-wrap" style="color:#eab308; border-color:#eab308;"><i class="fas fa-crown"></i></div>
+                                    <span class="achieve-name">DRIFT KING</span>
+                                    <span class="achieve-sub">Score 25,000 pts</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="panel-header-row" style="margin-bottom:6px;">
+                                <span class="panel-head-title">BADGES</span>
+                                <span class="panel-view-all">VIEW ALL</span>
+                            </div>
+
+                            <div class="badges-row-strip">
+                                <div class="badge-mini-icon"><i class="fas fa-star" style="color:#eab308;"></i></div>
+                                <div class="badge-mini-icon"><i class="fas fa-flag"></i></div>
+                                <div class="badge-mini-icon"><i class="fas fa-skull"></i></div>
+                                <div class="badge-mini-icon"><i class="fas fa-fire" style="color:#ef4444;"></i></div>
+                                <div class="badge-mini-icon"><i class="fas fa-bolt" style="color:#38bdf8;"></i></div>
+                                <div class="badge-mini-icon"><i class="fas fa-trophy" style="color:#a855f7;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+            </main>
+
+            <!-- CAREER HISTORY TAB VIEW -->
+            <main class="profile-main-display" id="historyViewPanel">
+                <div class="panel-header-row">
+                    <span style="font-size:1.1rem; font-weight:900; font-style:italic; color:#ffd000;">CAREER RESULTS (LAST 10 RACES)</span>
+                </div>
+
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Race #</th>
+                            <th>Position</th>
+                            <th>Score</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if races %}
+                            {% for race in races %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td style="color:#ffd000; font-weight:900;">#{{ race[0] }}</td>
+                                <td>{{ race[1] }}</td>
+                                <td style="color:#94a3b8;">{{ race[2] }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align:center; color:#64748b; padding:24px;">No races recorded yet. Play a race to view career telemetry!</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </main>
+
+        </div>
+
+    </div>
 </div>
 
+<script>
+// Dynamic XP Bar Calculation
+document.addEventListener("DOMContentLoaded", () => {
+    const currentXp = parseFloat(document.body.getAttribute('data-currentxp')) || 0;
+    const maxXp = parseFloat(document.body.getAttribute('data-maxxp')) || 1000;
+    const percentage = Math.min((currentXp / maxXp) * 100, 100);
+    const xpFillEl = document.getElementById("profileXpFill");
+    if (xpFillEl) {
+        xpFillEl.style.width = percentage + "%";
+    }
+});
 
-<!-- MIDDLE -->
-<div class="profile-middle">
+// Tab Switcher Logic
+function switchTab(tabName) {
+    const overview = document.getElementById("overviewPanel");
+    const history = document.getElementById("historyViewPanel");
+    const btnOverview = document.getElementById("btnOverviewTab");
+    const btnHistory = document.getElementById("btnHistoryTab");
 
-<h3 class="section-title">PlayerInfo</h3>
-
-<p><b>Username:</b> {{ username }}</p>
-<p><b>ID:</b> {{ player_id }}</p>
-
-
-
-<h3 class="section-title">Statistics</h3>
-
-<p><b>Total Score:</b> {{ total_score }}</p>
-
-<p id="levelText"><b>Level:</b> {{ level }}</p>
-<p><b>XP:</b> {{ current_xp }} / {{ max_xp }}</p>
-
-<div class="level-bar">
-<div class="level-fill"></div>
-</div>
-<p id="levelUpText" style="display:none; color: gold; font-weight:bold; font-size:20px;">
-🔥 LEVEL UP!
-</p>
-
-</div>
-
-
-<!-- RIGHT -->
-<div class="profile-right">
-
-<h3  class="section-title">Career Results (Last 10 Races)</h3>
-
-<table class="race-table">
-
-<tr>
-<th>Race</th>
-<th>Position</th>
-<th>Score</th>
-<th>Date</th>
-</tr>
-
-{% if races %}
-
-{% for race in races %}
-
-<tr>
-<td>{{ loop.index }}</td>
-<td>#{{ race[0] }}</td>
-<td>{{ race[1] }}</td>
-<td>{{ race[2] }}</td>
-</tr>
-
-{% endfor %}
-
-{% else %}
-
-<tr>
-<td colspan="4">No races played yet</td>
-</tr>
-
-{% endif %}
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+    if (tabName === 'history') {
+        overview.style.display = "none";
+        history.style.display = "block";
+        btnOverview.classList.remove("active");
+        btnHistory.classList.add("active");
+    } else {
+        overview.style.display = "flex";
+        history.style.display = "none";
+        btnHistory.classList.remove("active");
+        btnOverview.classList.add("active");
+    }
+}
+</script>
 
 </body>
 </html>

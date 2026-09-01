@@ -16,11 +16,9 @@ def generate_player_id():
 
 # --- Validation Helper Functions ---
 def is_valid_mobile(phone):
-    # 10 digits, starts with 6, 7, 8, or 9
     return bool(re.match(r'^[6-9]\d{9}$', phone))
 
 def is_strong_password(password):
-    # Min 6 characters, at least 1 digit, at least 1 alphabet
     if len(password) < 6:
         return False, "Password must be at least 6 characters long!"
     if not re.search(r'[0-9]', password):
@@ -42,7 +40,6 @@ def intro():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # JSON ya standard Form dono handle karega
         data = request.get_json() if request.is_json else request.form
         user_in = data.get('username')
         pass_in = data.get('password')
@@ -79,35 +76,28 @@ def register():
     password = data.get('password', '')
     confirm_password = data.get('confirm_password', '')
 
-    # 1. Empty field check
     if not phone or not username or not password or not confirm_password:
         return jsonify({"success": False, "message": "All fields are required!"}), 400
 
-    # 2. Valid Phone format check
     if not is_valid_mobile(phone):
         return jsonify({"success": False, "message": "Invalid mobile number! Enter a valid 10-digit number."}), 400
 
-    # 3. Check Phone already registered
     if database.is_phone_registered(phone):
         return jsonify({"success": False, "message": "This mobile number is already registered!"}), 400
 
-    # 4. Check Username already taken
     if len(username) < 3:
         return jsonify({"success": False, "message": "Username must be at least 3 characters!"}), 400
 
     if database.is_username_taken(username):
         return jsonify({"success": False, "message": "Username already taken! Choose a unique driver alias."}), 400
 
-    # 5. Password Confirmation check
     if password != confirm_password:
         return jsonify({"success": False, "message": "Passwords do not match!"}), 400
 
-    # 6. Strong Password check
     is_strong, pass_msg = is_strong_password(password)
     if not is_strong:
         return jsonify({"success": False, "message": pass_msg}), 400
 
-    # 7. Add to Database
     player_id = generate_player_id()
     if database.add_user(phone, username, password, player_id):
         return jsonify({"success": True, "message": "Driver account created successfully! Please Login."})
@@ -128,9 +118,75 @@ def login_guest():
 
 @app.route('/main_menu')
 def main_menu():
+    user_id = session.get('user_id')
+    if user_id is None:
+        return redirect(url_for('login'))
+
     username = session.get('username', 'Guest')
     player_id = session.get('player_id', '0000000000')
-    return render_template('main_menu.html', username=username, player_id=player_id)
+
+    if user_id == -1:
+        return render_template(
+            'main_menu.html',
+            username="Guest",
+            player_id="GUEST",
+            level=1,
+            total_score=0,
+            current_xp=0,
+            max_xp=1000
+        )
+
+    user, _ = database.get_profile_data(user_id)
+    if user:
+        total_score = user[3] or 0
+        level = (total_score // 1000) + 1
+        current_xp = total_score % 1000
+        max_xp = 1000
+        return render_template(
+            'main_menu.html',
+            username=user[0],
+            player_id=user[1],
+            level=level,
+            total_score=total_score,
+            current_xp=current_xp,
+            max_xp=max_xp
+        )
+
+    return render_template('main_menu.html', username=username, player_id=player_id, level=1, total_score=0, current_xp=0, max_xp=1000)
+
+@app.route('/get_player_stats')
+def get_player_stats():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False}), 401
+
+    if user_id == -1:
+        return jsonify({
+            "success": True,
+            "username": "Guest",
+            "level": 1,
+            "total_score": 0,
+            "current_xp": 0,
+            "max_xp": 1000
+        })
+
+    user, _ = database.get_profile_data(user_id)
+    if not user:
+        return jsonify({"success": False}), 404
+
+    total_score = user[3] or 0
+    level = (total_score // 1000) + 1
+    current_xp = total_score % 1000
+
+    return jsonify({
+        "success": True,
+        "username": user[0],
+        "player_id": user[1],
+        "level": level,
+        "total_score": total_score,
+        "current_xp": current_xp,
+        "max_xp": 1000
+    })
 
 @app.route('/logout')
 def logout():
@@ -199,8 +255,8 @@ def profile():
         )
 
     user, races = database.get_profile_data(user_id)
-    total_score = user[3]
-    level = total_score // 1000 + 1
+    total_score = user[3] or 0
+    level = (total_score // 1000) + 1
     current_xp = total_score % 1000
     max_xp = 1000
 
