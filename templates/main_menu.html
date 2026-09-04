@@ -2050,19 +2050,19 @@ window.isDrawerInputFocused = false;
   var countdown;
   var timer = 5;
 
-  var buildUrl = "/static/BugattiBuild/Build";
-  var config = {
-      dataUrl: buildUrl + "/BugattiBuild.data",
-      frameworkUrl: buildUrl + "/BugattiBuild.framework.js",
-      codeUrl: buildUrl + "/BugattiBuild.wasm",
-      streamingAssetsUrl: "StreamingAssets",
-      companyName: "DefaultCompany",
-      productName: "Car_Clash",
-      productVersion: "1.0",
-  };
+ var buildUrl = "/static/BugattiBuild1/Build";
+    var config = {
+    dataUrl: buildUrl + "/BugattiBuild1.data",
+    frameworkUrl: buildUrl + "/BugattiBuild1.framework.js",
+    codeUrl: buildUrl + "/BugattiBuild1.wasm",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "DefaultCompany",
+    productName: "Car_Clash",
+    productVersion: "1.0",
+    };
 
-  var script = document.createElement("script");
-  script.src = buildUrl + "/BugattiBuild.loader.js";
+    var script = document.createElement("script");
+    script.src = buildUrl + "/BugattiBuild1.loader.js";
   script.onload = () => {
       createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
           unityLoadProgress = Math.round(progress * 100);
