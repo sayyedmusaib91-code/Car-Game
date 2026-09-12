@@ -447,6 +447,236 @@ body, html {
 .golden-play-btn.disabled-btn { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; box-shadow: none; }
 
 /* ========================================================
+   PROFESSIONAL IN-GAME PAUSE MENU & BUTTON (ALL YELLOW THEME)
+   ======================================================== */
+#inGamePauseBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: rgba(15, 17, 21, 0.85);
+    border: 2px solid #ffd000;
+    color: #ffd000;
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(255, 208, 0, 0.4);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+}
+#inGamePauseBtn:hover { background: #ffd000; color: #000; transform: scale(1.1); }
+
+#inGamePauseOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 7, 12, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10%;
+}
+
+.pause-menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 340px;
+}
+
+.pause-header-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffd000;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(255, 208, 0, 0.4);
+}
+
+.arcade-btn {
+    background: #ffd000;
+    border: 2px solid transparent;
+    color: #000000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 1.5px;
+    padding: 14px 24px;
+    text-align: center;
+    cursor: pointer;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    box-shadow: 0 4px 20px rgba(255, 208, 0, 0.3);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: block;
+}
+
+.arcade-btn:hover, .arcade-btn.selected-arcade {
+    background: #ffe033;
+    border-color: #ffffff;
+    transform: scale(1.04);
+    box-shadow: 0 0 25px rgba(255, 208, 0, 0.8);
+}
+
+/* ========================================================
+   PROFESSIONAL EXACT REFERENCE RACE RESULTS MODAL
+   ======================================================== */
+#raceResultModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 7, 12, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.results-arcade-box {
+    width: 960px;
+    background: #0b0e14;
+    border: 2px solid #ffd000;
+    border-radius: 4px;
+    padding: 24px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    box-shadow: 0 0 50px rgba(255, 208, 0, 0.3);
+}
+
+.results-top-banner {
+    background: #ffd000;
+    color: #000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 12px;
+    clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+}
+
+.results-content-split {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.winner-trophy-side {
+    background: #0f131c;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+.winner-big-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+}
+
+.stars-row {
+    color: #ffd000;
+    font-size: 1.5rem;
+    display: flex;
+    gap: 8px;
+}
+
+.leaderboard-table-wrap {
+    background: #06080d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 150px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    align-items: stretch;
+}
+
+.leaderboard-row span {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+}
+
+.leaderboard-row span:nth-child(1) {
+    background: rgba(0, 0, 0, 0.35);
+    border-right: 2px solid #06080d;
+}
+
+.leaderboard-row span:nth-child(2) {
+    background: rgba(0, 0, 0, 0.15);
+    border-right: 2px solid #06080d;
+}
+
+.leaderboard-row span:nth-child(3) {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.leaderboard-header-row {
+    background: #ffd000 !important;
+    color: #000000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.leaderboard-header-row span {
+    background: transparent !important;
+    border-right: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-row.highlight-user {
+    background: #ffd000;
+    color: #000000;
+}
+
+.leaderboard-row.highlight-user span {
+    background: transparent !important;
+    border-right-color: rgba(0, 0, 0, 0.2);
+}
+
+.results-buttons-row {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+/* ========================================================
    CAR SELECTION MODE HUD
    ======================================================== */
 #carCustomViewHUD {
@@ -1135,31 +1365,80 @@ body, html {
     border-radius: 8px;
 }
 
+/* MAP SELECTION HUD STYLING */
 #mapSelectionHUD {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(5, 5, 5, 0.95);
+    background: rgba(5, 7, 12, 0.92);
+    backdrop-filter: blur(8px);
     z-index: 60;
     padding: 30px 40px;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .map-inspect-header { display: flex; justify-content: space-between; align-items: center; }
+
+/* Stylish Arcade Close Button */
+.map-close-arcade-btn {
+    background: rgba(15, 17, 21, 0.85);
+    border: 2px solid #ffd000;
+    color: #ffd000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 900;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 208, 0, 0.3);
+    transition: all 0.2s ease;
+}
+.map-close-arcade-btn:hover {
+    background: #ffd000;
+    color: #000;
+    transform: scale(1.08);
+}
+
 .map-display-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 440px; display: flex; flex-direction: column; align-items: center; }
-.map-card-box { width: 100%; background: rgba(15, 15, 15, 0.95); border: 2px solid #ffd000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 30px rgba(255, 208, 0, 0.2); position: relative; }
-.map-icon-cover { width: 100%; height: 180px; background: #111111; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #ffd000; }
-.map-details { padding: 18px 22px; }
-.map-name-label { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
-.map-stats-text { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: #94a3b8; }
+.map-card-box { width: 100%; background: #0b0e14; border: 2px solid #ffd000; border-radius: 8px; overflow: hidden; box-shadow: 0 0 40px rgba(255, 208, 0, 0.3); position: relative; }
+.map-icon-cover { width: 100%; height: 200px; background: #111520; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.map-icon-cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.9); }
+.map-details { padding: 18px 22px; background: #0f131c; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.map-name-label { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #ffffff; margin-bottom: 6px; letter-spacing: 1px; }
+.map-stats-text { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 800; color: #94a3b8; }
 .map-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); color: #ef4444; display: none; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
-.map-arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); font-size: 32px; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(0, 0, 0, 0.85); border: 2px solid #ffd000; border-radius: 8px; color: #ffd000; box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); transition: all 0.2s; }
+
+.map-arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); font-size: 26px; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(10, 14, 22, 0.85); border: 2px solid #ffd000; border-radius: 8px; color: #ffd000; box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); transition: all 0.2s; z-index: 10; }
 .map-arrow-btn:hover { background: #ffd000; color: #000; transform: translateY(-50%) scale(1.12); }
 .map-arrow-left { left: -90px; }
 .map-arrow-right { right: -90px; }
+
+/* Styled Select Map Button */
+.map-select-arcade-btn {
+    background: linear-gradient(135deg, #ffd000 0%, #eab308 100%);
+    border: none;
+    color: #000000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 2px;
+    padding: 12px 42px;
+    cursor: pointer;
+    clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+    box-shadow: 0 0 30px rgba(234, 179, 8, 0.45);
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+}
+.map-select-arcade-btn:hover {
+    background: linear-gradient(135deg, #ffe033 0%, #facc15 100%);
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(234, 179, 8, 0.7);
+}
 </style>
 </head>
 
@@ -1167,6 +1446,50 @@ body, html {
   data-currentxp="{{ current_xp or 0 }}" 
   data-maxxp="{{ max_xp or 1000 }}"
   data-level="{{ level or 1 }}">
+
+<!-- IN-GAME PAUSE BUTTON & PROFESSIONAL PAUSE MENU -->
+<button id="inGamePauseBtn" onclick="togglePauseMenu()" title="Pause Game"><i class="fas fa-pause"></i></button>
+
+<div id="inGamePauseOverlay">
+    <div class="pause-menu-container">
+        <div class="pause-header-title">PAUSED</div>
+        <button class="arcade-btn selected-arcade" id="pauseBtn0" onclick="resumeGame()">RESUME</button>
+        <button class="arcade-btn" id="pauseBtn1" onclick="restartGame()">RESTART</button>
+        <button class="arcade-btn" id="pauseBtn2" onclick="returnToMainMenu()">MAIN MENU</button>
+    </div>
+</div>
+
+<!-- PROFESSIONAL RACE RESULTS MODAL -->
+<div id="raceResultModal">
+    <div class="results-arcade-box">
+        <div class="results-top-banner">RACE RESULTS</div>
+        
+        <div class="results-content-split">
+            <div class="winner-trophy-side">
+                <div class="winner-big-text" id="resultModalTitle">VICTORY</div>
+                <div class="stars-row">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div style="font-family:'Rajdhani'; font-size:1.1rem; color:#94a3b8; font-weight:800;">
+                    SCORE: <b id="resScore" style="color:#22c55e; font-size:1.3rem;">500</b>
+                </div>
+                <div style="font-family:'Rajdhani'; font-size:1.05rem; color:#ffffff; font-weight:800;">
+                    YOUR POSITION: <span id="resPosition" style="color:#ffd000; font-family:'Orbitron';">1</span>
+                </div>
+            </div>
+
+            <div class="leaderboard-table-wrap" id="dynamicLeaderboardWrap">
+                <!-- Dynamically generated realistic leaderboard with exact 5 players -->
+            </div>
+        </div>
+
+        <div class="results-buttons-row" id="resultButtonsContainer">
+            <!-- Dynamically populated buttons -->
+        </div>
+    </div>
+</div>
 
 <!-- 1. FULL FRIEND PROFILE INSPECTION POPUP -->
 <div id="inspectPlayerProfileModal" style="display: none;">
@@ -1296,7 +1619,7 @@ body, html {
 <div class="main-container" id="mainContainer">
     <canvas id="unity-canvas"></canvas>
 
-    <!-- IN-GAME HUD TOAST NOTIFICATION CONTAINER (ADDED FIXED) -->
+    <!-- IN-GAME HUD TOAST NOTIFICATION CONTAINER -->
     <div id="gameNotificationHUD">
         <i class="fas fa-bell hud-notify-icon" id="hudNotifyIcon"></i>
         <span class="hud-notify-msg" id="hudNotifyText">NOTIFICATION</span>
@@ -1441,7 +1764,7 @@ body, html {
             </div>
 
             <div class="bottom-play-group">
-                <div class="quick-race-btn" id="quickRaceBtn" onclick="playGame()">
+                <div class="quick-race-btn" id="quickRaceBtn" onclick="startQuickRace()">
                     <span class="quick-race-title">QUICK RACE <i class="fas fa-random" style="font-size:0.8rem;"></i></span>
                     <span class="quick-race-sub">RANDOM MODE</span>
                 </div>
@@ -1618,14 +1941,16 @@ body, html {
 <!-- MAP SELECTION MODE HUD -->
 <div id="mapSelectionHUD" style="display: none;">
     <div class="map-inspect-header">
-        <div style="font-family:'Orbitron'; font-size:2rem; color:#ffd000; letter-spacing:2px;">CHOOSE TRACK / ARENA</div>
-        <button class="inspect-btn btn-back" onclick="exitMapSelectionMode()">CLOSE ✕</button>
+        <div style="font-family:'Orbitron'; font-size:2rem; color:#ffd000; letter-spacing:2px; font-style: italic;">CHOOSE TRACK / ARENA</div>
+        <button class="map-close-arcade-btn" onclick="exitMapSelectionMode()"><i class="fas fa-times"></i> CLOSE</button>
     </div>
 
     <div class="map-display-wrapper">
         <button class="map-arrow-btn map-arrow-left" onclick="prevMap()"><i class="fas fa-chevron-left"></i></button>
         <div class="map-card-box">
-            <div class="map-icon-cover" id="mapCoverIcon"><i class="fas fa-city"></i></div>
+            <div class="map-icon-cover" id="mapCoverContainer">
+                <img id="mapCoverImg" src="/static/image/cyber.png" alt="Map Preview">
+            </div>
             <div class="map-details">
                 <div class="map-name-label" id="mapTitleLabel">CYBER HIGHWAY</div>
                 <div class="map-stats-text" id="mapStatsLabel">Length: 4.8 km • Difficulty: MEDIUM</div>
@@ -1636,7 +1961,7 @@ body, html {
     </div>
 
     <div style="text-align:center;">
-        <button class="inspect-btn btn-equip" id="equipMapBtn" onclick="confirmSelectMap()">SELECT MAP</button>
+        <button class="map-select-arcade-btn" id="equipMapBtn" onclick="confirmSelectMap()">SELECT MAP</button>
     </div>
 </div>
 
@@ -2050,7 +2375,7 @@ window.isDrawerInputFocused = false;
   var countdown;
   var timer = 5;
 
- var buildUrl = "/static/BugattiBuild1/Build";
+  var buildUrl = "/static/BugattiBuild1/Build";
     var config = {
     dataUrl: buildUrl + "/BugattiBuild1.data",
     frameworkUrl: buildUrl + "/BugattiBuild1.framework.js",
@@ -2150,9 +2475,9 @@ window.isDrawerInputFocused = false;
   ];
 
   let maps = [
-      { title: "CYBER HIGHWAY", icon: "fa-city", stats: "Length: 4.8 km • Difficulty: MEDIUM", unlocked: true },
-      { title: "NEON HARBOR", icon: "fa-water", stats: "Length: 6.2 km • Difficulty: HARD", unlocked: false },
-      { title: "DESERT CANYON", icon: "fa-mountain", stats: "Length: 3.5 km • Difficulty: EASY", unlocked: false }
+      { title: "CYBER HIGHWAY", img: "/static/image/cyber.png", stats: "Length: 4.8 km • Difficulty: MEDIUM", unlocked: true },
+      { title: "NEON HARBOR", img: "/static/image/neon.png", stats: "Length: 6.2 km • Difficulty: HARD", unlocked: false },
+      { title: "DESERT CANYON", img: "/static/image/desert.png", stats: "Length: 3.5 km • Difficulty: EASY", unlocked: false }
   ];
 
   let currentCar = 0;
@@ -2263,7 +2588,7 @@ window.isDrawerInputFocused = false;
 
   function updateMapDisplay() {
       const map = maps[currentMapIndex];
-      document.getElementById("mapCoverIcon").innerHTML = `<i class="fas ${map.icon}"></i>`;
+      document.getElementById("mapCoverImg").src = map.img;
       document.getElementById("mapTitleLabel").innerText = map.title;
       document.getElementById("mapStatsLabel").innerText = map.stats;
 
@@ -2296,6 +2621,9 @@ window.isDrawerInputFocused = false;
   }
 
   let isMatchmakingActive = false;
+  let isGameRunning = false;
+  let isPaused = false;
+  let pauseSelectedIndex = 0;
 
   function playGame() {
       if (isMatchmakingActive) return;
@@ -2338,6 +2666,33 @@ window.isDrawerInputFocused = false;
       }, 1000);
   }
 
+  function startQuickRace() {
+      if (isMatchmakingActive) return;
+      if (!cars[selectedEquippedCar].unlocked) {
+          showGameToast("SELECT AN UNLOCKED CAR FIRST!", "error", "fa-car");
+          return;
+      }
+
+      isMatchmakingActive = true;
+
+      const playBtn = document.getElementById("playBtn");
+      const quickRaceBtn = document.getElementById("quickRaceBtn");
+      if (playBtn) playBtn.classList.add("disabled-btn");
+      if (quickRaceBtn) quickRaceBtn.classList.add("disabled-btn");
+
+      document.getElementById("main-menu-ui").style.display = "none";
+      document.getElementById("carDisplay").style.display = "none";
+
+      if (!isUnityLoaded) {
+          window.isWaitingForGameToStart = true;
+          const loadScreen = document.getElementById("gameLoadingScreen");
+          loadScreen.style.display = "flex";
+          updateLoadingProgress(unityLoadProgress);
+      } else {
+          triggerGameLaunch();
+      }
+  }
+
   function cancelMatch() {
       clearInterval(countdown);
       isMatchmakingActive = false;
@@ -2362,6 +2717,13 @@ window.isDrawerInputFocused = false;
                   loadScreen.style.display = "none";
                   loadScreen.style.opacity = "1";
                   document.getElementById("unity-canvas").style.display = "block";
+                  document.getElementById("inGamePauseBtn").style.display = "flex";
+                  isGameRunning = true;
+                  isPaused = false;
+
+                  // Cursor lock for game input
+                  CursorLockModeActive(true);
+
                   if (globalUnityInstance) {
                       globalUnityInstance.SendMessage("GameManager", "StartGame");
                   }
@@ -2369,6 +2731,226 @@ window.isDrawerInputFocused = false;
           }, 300);
       }
   }
+
+  function CursorLockModeActive(locked) {
+      if (locked) {
+          document.body.style.cursor = "none";
+      } else {
+          document.body.style.cursor = "default";
+      }
+  }
+
+  // PAUSE MENU FUNCTIONS
+  function togglePauseMenu() {
+      if (!isGameRunning) return;
+      if (isPaused) {
+          resumeGame();
+      } else {
+          pauseGame();
+      }
+  }
+
+  function pauseGame() {
+      isPaused = true;
+      pauseSelectedIndex = 0;
+      updatePauseSelection();
+      document.getElementById("inGamePauseOverlay").style.display = "flex";
+      CursorLockModeActive(false); // Make cursor visible for UI
+      if (globalUnityInstance) {
+          globalUnityInstance.SendMessage("GameManager", "PauseGame");
+      }
+  }
+
+  function resumeGame() {
+      isPaused = false;
+      document.getElementById("inGamePauseOverlay").style.display = "none";
+      CursorLockModeActive(true);
+      if (globalUnityInstance) {
+          globalUnityInstance.SendMessage("GameManager", "ResumeGame");
+      }
+  }
+
+  function restartGame() {
+      isPaused = false;
+      document.getElementById("inGamePauseOverlay").style.display = "none";
+      CursorLockModeActive(true);
+      if (globalUnityInstance) {
+          globalUnityInstance.SendMessage("GameManager", "RestartGame");
+      } else {
+          location.reload();
+      }
+  }
+
+  function returnToMainMenu() {
+      isPaused = false;
+      isGameRunning = false;
+      isMatchmakingActive = false;
+      document.getElementById("inGamePauseOverlay").style.display = "none";
+      document.getElementById("inGamePauseBtn").style.display = "none";
+      document.getElementById("unity-canvas").style.display = "none";
+      document.getElementById("main-menu-ui").style.display = "flex";
+      document.getElementById("carDisplay").style.display = "block";
+      CursorLockModeActive(false);
+
+      const playBtn = document.getElementById("playBtn");
+      const quickRaceBtn = document.getElementById("quickRaceBtn");
+      if (playBtn) playBtn.classList.remove("disabled-btn");
+      if (quickRaceBtn) quickRaceBtn.classList.remove("disabled-btn");
+
+      if (globalUnityInstance) {
+          globalUnityInstance.SendMessage("GameManager", "QuitToMenu");
+      }
+  }
+
+  function updatePauseSelection() {
+      for (let i = 0; i < 3; i++) {
+          const btn = document.getElementById("pauseBtn" + i);
+          if (btn) {
+              if (i === pauseSelectedIndex) {
+                  btn.classList.add("selected-arcade");
+              } else {
+                  btn.classList.remove("selected-arcade");
+              }
+          }
+      }
+  }
+
+  // RACE RESULTS HANDLER (Called from Unity when race finishes)
+  function showRaceResults(position, score) {
+      isGameRunning = false;
+      document.getElementById("inGamePauseBtn").style.display = "none";
+      document.getElementById("unity-canvas").style.display = "block";
+      CursorLockModeActive(false);
+
+      let userPos = Number(position);
+      if (userPos < 1) userPos = 1;
+      if (userPos > 5) userPos = 5;
+
+      document.getElementById("resPosition").innerText = userPos;
+      document.getElementById("resScore").innerText = score;
+
+      let botNames = ["Dave", "Vanya", "Sonia", "Jude", "Ethan"];
+      let racers = [];
+      let bIdx = 0;
+
+      for (let r = 1; r <= 5; r++) {
+          if (r === userPos) {
+              racers.push({ name: "YOU (PLAYER)", rank: userPos });
+          } else {
+              racers.push({ name: botNames[bIdx], rank: r });
+              bIdx++;
+          }
+      }
+
+      racers.sort((a, b) => a.rank - b.rank);
+
+      let lbHtml = `
+          <div class="leaderboard-row leaderboard-header-row">
+              <span>POSITION</span>
+              <span>DRIVER</span>
+              <span>RACE TIME</span>
+          </div>`;
+
+      racers.forEach((r) => {
+          let isUser = (r.name === "YOU (PLAYER)");
+          let timeStr = `1'1${r.rank}"${11 + r.rank * 3}`;
+          lbHtml += `
+              <div class="leaderboard-row ${isUser ? 'highlight-user' : ''}">
+                  <span>${r.rank}</span>
+                  <span>${r.name}</span>
+                  <span style="${isUser ? 'color:#000000; font-weight:900;' : 'color:#94a3b8;'}">${timeStr}</span>
+              </div>`;
+      });
+
+      document.getElementById("dynamicLeaderboardWrap").innerHTML = lbHtml;
+
+      const btnContainer = document.getElementById("resultButtonsContainer");
+      btnContainer.innerHTML = `
+          <button class="arcade-btn selected-arcade" onclick="retryRace()" style="width: 180px;"><i class="fas fa-redo"></i> RESTART</button>
+          <button class="arcade-btn" onclick="returnToMainMenuFromModal()" style="width: 180px;"><i class="fas fa-home"></i> MAIN MENU</button>
+      `;
+
+      if (userPos <= 2) {
+          document.getElementById("resultModalTitle").innerText = "VICTORY";
+      } else {
+          document.getElementById("resultModalTitle").innerText = "RACE OVER";
+      }
+
+      document.getElementById("raceResultModal").style.display = "flex";
+
+      fetch('/save_race_result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ position: userPos, score: score })
+      }).catch(() => {});
+  }
+
+  function retryRace() {
+    document.getElementById("raceResultModal").style.display = "none";
+    let canvas = document.querySelector("#unity-canvas");
+    if (canvas) {
+        canvas.style.display = "block";
+        canvas.style.pointerEvents = "auto";
+    }
+
+    let pauseBtn = document.getElementById("inGamePauseBtn");
+    if (pauseBtn) {
+        pauseBtn.style.display = "flex";
+        pauseBtn.style.pointerEvents = "auto";
+    }
+
+    isGameRunning = true;
+    isPaused = false;
+    let pauseOverlay = document.getElementById("inGamePauseOverlay");
+    if (pauseOverlay) {
+        pauseOverlay.style.display = "none";
+    }
+    
+    CursorLockModeActive(true);
+
+    if (globalUnityInstance) {
+        globalUnityInstance.SendMessage("GameManager", "RestartGame");
+        setTimeout(() => {
+            if (canvas) {
+                canvas.focus();
+            }
+            window.focus();
+        }, 300);
+    } else {
+        location.reload();
+    }
+  }
+
+  function returnToMainMenuFromModal() {
+      document.getElementById("raceResultModal").style.display = "none";
+      returnToMainMenu();
+  }
+
+  // Keyboard navigation & ESC key handler
+  window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+          if (isGameRunning) {
+              togglePauseMenu();
+          }
+      }
+
+      if (isPaused) {
+          if (e.key === 'ArrowUp') {
+              pauseSelectedIndex = (pauseSelectedIndex - 1 + 3) % 3;
+              updatePauseSelection();
+              e.preventDefault();
+          } else if (e.key === 'ArrowDown') {
+              pauseSelectedIndex = (pauseSelectedIndex + 1) % 3;
+              updatePauseSelection();
+              e.preventDefault();
+          } else if (e.key === 'Enter') {
+              if (pauseSelectedIndex === 0) resumeGame();
+              else if (pauseSelectedIndex === 1) restartGame();
+              else if (pauseSelectedIndex === 2) returnToMainMenu();
+              e.preventDefault();
+          }
+      }
+  });
 
   function openSettings() { document.getElementById("settings-menu").style.display = "flex"; }
   function closeSettings() { document.getElementById("settings-menu").style.display = "none"; }

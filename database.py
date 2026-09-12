@@ -1,12 +1,13 @@
+import os
 import psycopg2
 from psycopg2.extras import DictCursor
 
-# PostgreSQL Local Configuration
-DB_HOST = "localhost"
-DB_NAME = "carclash_db"
-DB_USER = "postgres"
-DB_PASS = "admin123"
-DB_PORT = "5432"
+# PostgreSQL Configuration (Docker & Local compatible)
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_NAME = os.getenv("DB_NAME", "carclash_db")
+DB_USER = os.getenv("DB_USER", "postgres")
+DB_PASS = os.getenv("DB_PASS", "admin123")
+DB_PORT = os.getenv("DB_PORT", "5432")
 
 def get_db_connection():
     """PostgreSQL Database connection return karta hai."""
@@ -58,7 +59,7 @@ def init_db():
             id SERIAL PRIMARY KEY,
             sender_id INT NOT NULL REFERENCES drivers (id) ON DELETE CASCADE,
             receiver_id INT NOT NULL REFERENCES drivers (id) ON DELETE CASCADE,
-            status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected'
+            status VARCHAR(20) DEFAULT 'pending', 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(sender_id, receiver_id)
         );
@@ -174,7 +175,6 @@ def save_race_result(user_id, position, score, coins_earned=0):
 # --- Friend System Functions ---
 
 def search_driver_by_player_id(player_id, current_user_id):
-    """Player ID se kisi bhi user ki profile aur relation fetch karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -191,14 +191,10 @@ def search_driver_by_player_id(player_id, current_user_id):
         
     target_id = target['id']
     total_score = target['total_score'] or 0
-    level = (total_score // 1000) + 1
-    current_xp = total_score % 1000
     
-    # Check total races & wins
     cursor.execute("SELECT COUNT(*), COUNT(CASE WHEN position = 1 THEN 1 END) FROM race_results WHERE user_id = %s", (target_id,))
     races_count, wins_count = cursor.fetchone()
     
-    # Relation status check (self, pending, accepted, none)
     relation = "none"
     if target_id == current_user_id:
         relation = "self"
@@ -223,9 +219,9 @@ def search_driver_by_player_id(player_id, current_user_id):
         "id": target['id'],
         "username": target['username'],
         "player_id": target['player_id'],
-        "level": level,
+        "level": (total_score // 1000) + 1,
         "total_score": total_score,
-        "current_xp": current_xp,
+        "current_xp": total_score % 1000,
         "races_played": races_count or 0,
         "races_won": wins_count or 0,
         "relation": relation
@@ -258,7 +254,6 @@ def send_friend_request(sender_id, receiver_player_id):
         conn.close()
 
 def get_incoming_friend_requests(user_id):
-    """Aapko aayi hui pending friend requests fetch karta hai."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -273,12 +268,11 @@ def get_incoming_friend_requests(user_id):
     requests = []
     for r in rows:
         total_score = r['total_score'] or 0
-        level = (total_score // 1000) + 1
         requests.append({
             "request_id": r['request_id'],
             "username": r['username'],
             "player_id": r['player_id'],
-            "level": level,
+            "level": (total_score // 1000) + 1,
             "created_at": r['created_at'].strftime("%d %b, %H:%M") if r['created_at'] else ""
         })
     cursor.close()

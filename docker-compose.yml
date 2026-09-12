@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: car_game_postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: cargamedb
+    ports:
+      - "5433:5432"   # <-- Yahan 5432 ki jagah 5433 kar diya hai
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: car_game_flask
+    volumes:
+      - .:/app
+    ports:
+      - "5050:5000"
+    environment:
+      - DATABASE_URL=postgresql://myuser:mypassword@db:5432/cargamedb
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

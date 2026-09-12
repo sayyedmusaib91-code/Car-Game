@@ -232,7 +232,7 @@ def respond_request():
         
     data = request.get_json() or {}
     req_id = data.get('request_id')
-    action = data.get('action') # 'accept' ya 'reject'
+    action = data.get('action')
     
     success = database.respond_to_friend_request(req_id, user_id, action)
     return jsonify({"success": success})
@@ -254,11 +254,14 @@ def logout():
 
 @app.route('/save_race_result', methods=['POST'])
 def save_race():
-    data = request.get_json()
+    data = request.get_json() or {}
     user_id = session.get('user_id')
 
     if not user_id:
         return jsonify({"error": "Not logged in"}), 401
+
+    if user_id == -1:
+        return jsonify({"status": "guest_skipped"})
 
     position = data.get("position")
     score = data.get("score")
@@ -316,4 +319,4 @@ def shop():
     return render_template('shop.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

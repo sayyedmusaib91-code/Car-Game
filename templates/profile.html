@@ -955,7 +955,7 @@ body, html {
                     </thead>
                     <tbody>
                         {% if races %}
-                            {% for race in races %}
+                            {% for race in races[:10] %}
                             <tr>
                                 <td>{{ loop.index }}</td>
                                 <td style="color:#ffd000; font-weight:900;">#{{ race[0] }}</td>
