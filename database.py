@@ -1,25 +1,43 @@
 import os
+import time
 import psycopg2
 from psycopg2.extras import DictCursor
 
-# PostgreSQL Configuration (Docker & Local compatible)
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME", "carclash_db")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASS = os.getenv("DB_PASS", "admin123")
-DB_PORT = os.getenv("DB_PORT", "5432")
+# Smart Configuration: Detects if running inside Docker or Locally
+# Agar environment me 'DB_HOST' set hai toh wo use hoga, nahi toh check karega ki Dockerenv file hai ya nahi
+is_docker = os.path.exists('/.dockerenv')
+
+if is_docker:
+    DB_HOST = os.getenv("DB_HOST", "db")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+else:
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "5433")  # Local ke liye aapka port 5433 hai
+
+DB_NAME = os.getenv("DB_NAME", "cargamedb")
+DB_USER = os.getenv("DB_USER", "myuser")
+DB_PASS = os.getenv("DB_PASS", "mypassword")
 
 def get_db_connection():
-    """PostgreSQL Database connection return karta hai."""
-    conn = psycopg2.connect(
-        host=DB_HOST,
-        database=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-        port=DB_PORT,
-        cursor_factory=DictCursor
-    )
-    return conn
+    """PostgreSQL Database connection with retry logic."""
+    retries = 5
+    while retries > 0:
+        try:
+            conn = psycopg2.connect(
+                host=DB_HOST,
+                database=DB_NAME,
+                user=DB_USER,
+                password=DB_PASS,
+                port=DB_PORT,
+                cursor_factory=DictCursor
+            )
+            return conn
+        except psycopg2.OperationalError as e:
+            retries -= 1
+            if retries == 0:
+                raise e
+            print("Database connecting... retrying in 2 seconds...")
+            time.sleep(2)
 
 def init_db():
     """Drivers, Race Results, aur Friend Requests tables create karta hai."""
