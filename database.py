@@ -2,21 +2,32 @@ import os
 import time
 import psycopg2
 from psycopg2.extras import DictCursor
+from urllib.parse import urlparse
 
-# Smart Configuration: Detects if running inside Docker or Locally
-# Agar environment me 'DB_HOST' set hai toh wo use hoga, nahi toh check karega ki Dockerenv file hai ya nahi
-is_docker = os.path.exists('/.dockerenv')
+# Smart Configuration: Render Cloud Database ya Local/Docker detect karega
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-if is_docker:
-    DB_HOST = os.getenv("DB_HOST", "db")
-    DB_PORT = os.getenv("DB_PORT", "5432")
+if DATABASE_URL:
+    # Agar Render ka DATABASE_URL mil gaya (Production)
+    url = urlparse(DATABASE_URL)
+    DB_HOST = url.hostname
+    DB_PORT = url.port
+    DB_NAME = url.path[1:]
+    DB_USER = url.username
+    DB_PASS = url.password
 else:
-    DB_HOST = os.getenv("DB_HOST", "localhost")
-    DB_PORT = os.getenv("DB_PORT", "5433")  # Local ke liye aapka port 5433 hai
+    # Local development ya Docker ke liye
+    is_docker = os.path.exists('/.dockerenv')
+    if is_docker:
+        DB_HOST = os.getenv("DB_HOST", "db")
+        DB_PORT = os.getenv("DB_PORT", "5432")
+    else:
+        DB_HOST = os.getenv("DB_HOST", "localhost")
+        DB_PORT = os.getenv("DB_PORT", "5433")  # Local ke liye port 5433
 
-DB_NAME = os.getenv("DB_NAME", "cargamedb")
-DB_USER = os.getenv("DB_USER", "myuser")
-DB_PASS = os.getenv("DB_PASS", "mypassword")
+    DB_NAME = os.getenv("DB_NAME", "cargamedb")
+    DB_USER = os.getenv("DB_USER", "myuser")
+    DB_PASS = os.getenv("DB_PASS", "mypassword")
 
 def get_db_connection():
     """PostgreSQL Database connection with retry logic."""
